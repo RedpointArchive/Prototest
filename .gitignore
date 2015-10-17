@@ -1,0 +1,6 @@
+.vs/*
+bin/
+obj/
+*.csproj
+*.sln
+*.speccache
