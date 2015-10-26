@@ -1,9 +1,13 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project Name="Prototest.Library" Path="Prototest.Library" Type="Library">
   <References>
     <Reference Include="System" />
     <Reference Include="System.Core" />
   </References>
   <Files>
+    <Compile Include="PrototestFailureException.cs" />
+    <Compile Include="Runner.cs" />
+    <Compile Include="Version1\Assert.cs" />
+    <Compile Include="Version1\IAssert.cs" />
   </Files>
 </Project>

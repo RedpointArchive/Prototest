@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project Name="Prototest.Example" Path="Prototest.Example" Type="Console">
   <References>
     <Reference Include="System" />
@@ -6,6 +6,6 @@
     <Reference Include="Prototest" />
   </References>
   <Files>
-    <Compile Include="Program.cs" />
+    <Compile Include="ExampleTestA.cs" />
   </Files>
 </Project>
