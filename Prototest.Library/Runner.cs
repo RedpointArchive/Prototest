@@ -9,7 +9,7 @@ namespace Prototest.Library
 {
     public static class Runner
     {
-        public static void Run(Assembly assembly)
+        public static bool Run(Assembly assembly)
         {
             var assertTypes = new Dictionary<Type, Type>
             {
@@ -55,6 +55,7 @@ namespace Prototest.Library
             Console.WriteLine("## init " + testClasses.Count + " test classes found");
             Console.WriteLine("## init " + testClasses.Sum(x => x.TestMethods.Count) + " test methods found");
 
+            var anyFail = false;
             Task.WaitAll(
                 testClasses.SelectMany(
                     x => x.TestMethods.Select(
@@ -75,8 +76,11 @@ namespace Prototest.Library
                             catch (Exception ex)
                             {
                                 Console.WriteLine("## fail " + x.Type.FullName + "." + x.TestMethod.Name + ": " + ex);
+                                anyFail = true;
                             }
                         })).ToArray());
+
+            return !anyFail;
         }
     }
 

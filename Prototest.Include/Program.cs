@@ -7,7 +7,12 @@ namespace Prototest.Include
     {
         public static void Main(string[] args)
         {
-            Prototest.Library.Runner.Run(Assembly.GetExecutingAssembly());
+            if (Prototest.Library.Runner.Run(Assembly.GetExecutingAssembly()))
+            {
+                Environment.Exit(0);
+            }
+
+            Environment.Exit(1);
         }
     }
 }
