@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -34,7 +36,7 @@ namespace Prototest.Library
 
                 var constructor = constructors.First();
                 var parameters = constructor.GetParameters();
-                if (parameters.All(x => assertTypes.Keys.Contains(x.ParameterType)))
+                if (parameters.Length > 0 && parameters.All(x => assertTypes.Keys.Contains(x.ParameterType)))
                 {
                     var testClass = new TestClass
                     {
@@ -52,9 +54,14 @@ namespace Prototest.Library
                 }
             }
 
-            Console.WriteLine("## init " + testClasses.Count + " test classes found");
-            Console.WriteLine("## init " + testClasses.Sum(x => x.TestMethods.Count) + " test methods found");
+            WriteOutput("## init " + testClasses.Count + " test classes found");
+            WriteOutput("## init " + testClasses.Sum(x => x.TestMethods.Count) + " test methods found");
 
+            var lockObject = new object();
+            var ran = 0;
+            var pass = 0;
+            var fail = 0;
+            var bag = new ConcurrentBag<string>();
             var anyFail = false;
             Task.WaitAll(
                 testClasses.SelectMany(
@@ -67,20 +74,51 @@ namespace Prototest.Library
                                 x.Constructor.GetParameters()
                                     .Select(z => Activator.CreateInstance(assertTypes[z.ParameterType]))
                                     .ToArray());
-                            Console.WriteLine("## start " + x.Type.FullName + "." + x.TestMethod.Name);
+                            WriteOutput("## start " + x.Type.FullName + "." + x.TestMethod.Name);
+                            lock (lockObject) ran++;
                             try
                             {
                                 x.TestMethod.Invoke(obj, null);
-                                Console.WriteLine("## pass " + x.Type.FullName + "." + x.TestMethod.Name);
+                                WriteOutput("## pass " + x.Type.FullName + "." + x.TestMethod.Name);
+                                lock (lockObject) pass++;
+                            }
+                            catch (TargetInvocationException ex)
+                            {
+                                WriteOutput("## fail " + x.Type.FullName + "." + x.TestMethod.Name + ": " + ex.InnerException);
+                                lock (lockObject) fail++;
+                                anyFail = true;
+                                bag.Add("fail " + x.Type.FullName + "." + x.TestMethod.Name + ": " + ex.InnerException);
                             }
                             catch (Exception ex)
                             {
-                                Console.WriteLine("## fail " + x.Type.FullName + "." + x.TestMethod.Name + ": " + ex);
+                                WriteOutput("## fail " + x.Type.FullName + "." + x.TestMethod.Name + ": " + ex);
+                                lock (lockObject) fail++;
                                 anyFail = true;
+                                bag.Add("fail " + x.Type.FullName + "." + x.TestMethod.Name + ": " + ex);
                             }
                         })).ToArray());
 
+            var end = "## summary ";
+            if (anyFail) end += "fail";
+            else end += "pass";
+            end += ": " + ran + " ran " + fail + " fail " + pass + " pass";
+            WriteOutput(end);
+
+            if (anyFail)
+            {
+                foreach (var b in bag)
+                {
+                    WriteOutput("## detail " + b);
+                }
+            }
+
             return !anyFail;
+        }
+
+        private static void WriteOutput(string msg)
+        {
+            Console.WriteLine(msg);
+            Debug.WriteLine(msg);
         }
     }
 

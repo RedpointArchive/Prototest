@@ -9,5 +9,6 @@
     <Compile Include="Runner.cs" />
     <Compile Include="Version1\Assert.cs" />
     <Compile Include="Version1\IAssert.cs" />
+    <Compile Include="Version1\ICategorize.cs" />
   </Files>
 </Project>
