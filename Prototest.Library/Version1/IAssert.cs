@@ -26,5 +26,7 @@ namespace Prototest.Library.Version1
         void Same(object a, object b);
         void True(bool expression);
         void True(bool expression, string message);
+        void IsType<T>(object obj);
+        void NotSame(object a, object b);
     }
 }

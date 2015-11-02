@@ -23,6 +23,22 @@ namespace Prototest.Library.Version1
             }
         }
 
+        public void IsType<T>(object obj)
+        {
+            if (!(obj is T))
+            {
+                throw new PrototestFailureException("object is not of type " + typeof(T).FullName);
+            }
+        }
+
+        public void NotSame(object a, object b)
+        {
+            if (object.ReferenceEquals(a, b))
+            {
+                throw new PrototestFailureException("A and B are the same object");
+            }
+        }
+
         public void Equal<T>(T[] a, T[] b) where T : IEquatable<T>
         {
             True((a == null && b == null) || (a != null && b != null));
