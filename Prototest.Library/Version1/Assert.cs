@@ -53,6 +53,43 @@ namespace Prototest.Library.Version1
             }
         }
 
+        public void Equal<T>(T? a, T? b) where T : struct, IEquatable<T>
+        {
+            if (a == null)
+            {
+                if (b != null)
+                {
+                    throw new PrototestFailureException("A has value while B is null");
+                }
+            }
+            else
+            {
+                if (b == null)
+                {
+                    throw new PrototestFailureException("A is null while B has value");
+                }
+
+                if (!a.Equals(b))
+                {
+                    throw new PrototestFailureException("A is not equal to B");
+                }
+            }
+        }
+
+        public void Equal<T>(T?[] a, T?[] b) where T : struct, IEquatable<T>
+        {
+            True((a == null && b == null) || (a != null && b != null));
+            if (a == null || b == null)
+            {
+                return;
+            }
+            Equal(a.Length, b.Length);
+            for (var i = 0; i < a.Length; i++)
+            {
+                Equal(a[i], b[i]);
+            }
+        }
+
         public void False(bool expression)
         {
             if (expression)

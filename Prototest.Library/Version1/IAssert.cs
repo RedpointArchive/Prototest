@@ -16,6 +16,8 @@ namespace Prototest.Library.Version1
         void Empty(IEnumerable collection);
         void Equal<T>(T a, T b) where T : IEquatable<T>;
         void Equal<T>(T[] a, T[] b) where T : IEquatable<T>;
+        void Equal<T>(T? a, T? b) where T : struct, IEquatable<T>;
+        void Equal<T>(T?[] a, T?[] b) where T : struct, IEquatable<T>;
         void False(bool expression);
         void False(bool expression, string message);
         void NotEmpty(IEnumerable collection);
