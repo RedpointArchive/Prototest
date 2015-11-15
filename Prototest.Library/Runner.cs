@@ -57,17 +57,18 @@ namespace Prototest.Library
             WriteOutput("## init " + testClasses.Count + " test classes found");
             WriteOutput("## init " + testClasses.Sum(x => x.TestMethods.Count) + " test methods found");
 
+            
+
             var lockObject = new object();
             var ran = 0;
             var pass = 0;
             var fail = 0;
             var bag = new ConcurrentBag<string>();
             var anyFail = false;
-            Task.WaitAll(
-                testClasses.SelectMany(
+            var tasks = testClasses.SelectMany(
                     x => x.TestMethods.Select(
                         y => new {x.Type, x.Constructor, TestMethod = y}))
-                    .Select(x => Task.Run(
+                    .Select(x => new Action(
                         () =>
                         {
                             var obj = x.Constructor.Invoke(
@@ -96,7 +97,21 @@ namespace Prototest.Library
                                 anyFail = true;
                                 bag.Add("fail " + x.Type.FullName + "." + x.TestMethod.Name + ": " + ex);
                             }
-                        })).ToArray());
+                        })).ToArray();
+
+            if (Debugger.IsAttached)
+            {
+                // Run in single thread when a debugger is attached to make
+                // diagnosing issues easier.
+                foreach (var task in tasks)
+                {
+                    task();
+                }
+            }
+            else
+            {
+                Parallel.Invoke(tasks);
+            }
 
             var end = "## summary ";
             if (anyFail) end += "fail";
