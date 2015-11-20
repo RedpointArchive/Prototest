@@ -5,7 +5,14 @@
     <Reference Include="System.Core" />
   </References>
   <Files>
+    <AndroidResource Include="Resources\layout\TestRunner.axml">
+      <SubType>AndroidResource</SubType>
+      <Platforms>Android,Ouya</Platforms>
+    </AndroidResource>
     <Compile Include="PrototestFailureException.cs" />
+    <Compile Include="Resources\Resource.Designer.cs">
+      <Platforms>Android,Ouya</Platforms>
+    </Compile>
     <Compile Include="Runner.cs" />
     <Compile Include="Version1\Assert.cs" />
     <Compile Include="Version1\IAssert.cs" />

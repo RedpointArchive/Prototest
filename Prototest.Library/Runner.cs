@@ -11,7 +11,15 @@ namespace Prototest.Library
 {
     public static class Runner
     {
-        public static bool Run(Assembly assembly)
+        public static bool Run(
+            Assembly assembly,
+            Action<int> runStateInitTestClassesFound, 
+            Action<int> runStateInitTestMethodsFound, 
+            Action<Type, MethodInfo> runStateStartTest,
+            Action<Type, MethodInfo, int> runStatePassTest, 
+            Action<Type, MethodInfo, ConcurrentBag<string>, Exception> runStateFailTest, 
+            Action<bool, int, int, int> runStateSummary, 
+            Action<bool, ConcurrentBag<string>> runStateDetail)
         {
             var assertTypes = new Dictionary<Type, Type>
             {
@@ -54,10 +62,8 @@ namespace Prototest.Library
                 }
             }
 
-            WriteOutput("## init " + testClasses.Count + " test classes found");
-            WriteOutput("## init " + testClasses.Sum(x => x.TestMethods.Count) + " test methods found");
-
-            
+            runStateInitTestClassesFound(testClasses.Count);
+            runStateInitTestMethodsFound(testClasses.Sum(x => x.TestMethods.Count));
 
             var lockObject = new object();
             var ran = 0;
@@ -75,27 +81,25 @@ namespace Prototest.Library
                                 x.Constructor.GetParameters()
                                     .Select(z => Activator.CreateInstance(assertTypes[z.ParameterType]))
                                     .ToArray());
-                            WriteOutput("## start " + x.Type.FullName + "." + x.TestMethod.Name);
+                            runStateStartTest(x.Type, x.TestMethod);
                             lock (lockObject) ran++;
                             try
                             {
                                 x.TestMethod.Invoke(obj, null);
-                                WriteOutput("## pass " + x.Type.FullName + "." + x.TestMethod.Name);
                                 lock (lockObject) pass++;
+                                runStatePassTest(x.Type, x.TestMethod, pass);
                             }
                             catch (TargetInvocationException ex)
                             {
-                                WriteOutput("## fail " + x.Type.FullName + "." + x.TestMethod.Name + ": " + ex.InnerException);
                                 lock (lockObject) fail++;
+                                runStateFailTest(x.Type, x.TestMethod, bag, ex.InnerException);
                                 anyFail = true;
-                                bag.Add("fail " + x.Type.FullName + "." + x.TestMethod.Name + ": " + ex.InnerException);
                             }
                             catch (Exception ex)
                             {
-                                WriteOutput("## fail " + x.Type.FullName + "." + x.TestMethod.Name + ": " + ex);
                                 lock (lockObject) fail++;
+                                runStateFailTest(x.Type, x.TestMethod, bag, ex);
                                 anyFail = true;
-                                bag.Add("fail " + x.Type.FullName + "." + x.TestMethod.Name + ": " + ex);
                             }
                         })).ToArray();
 
@@ -113,28 +117,12 @@ namespace Prototest.Library
                 Parallel.Invoke(tasks);
             }
 
-            var end = "## summary ";
-            if (anyFail) end += "fail";
-            else end += "pass";
-            end += ": " + ran + " ran " + fail + " fail " + pass + " pass";
-            WriteOutput(end);
-
-            if (anyFail)
-            {
-                foreach (var b in bag)
-                {
-                    WriteOutput("## detail " + b);
-                }
-            }
+            runStateSummary(anyFail, ran, fail, pass);
+            runStateDetail(anyFail, bag);
 
             return !anyFail;
         }
-
-        private static void WriteOutput(string msg)
-        {
-            Console.WriteLine(msg);
-            Debug.WriteLine(msg);
-        }
+        
     }
 
     internal class TestClass

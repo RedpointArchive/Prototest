@@ -2,5 +2,8 @@
 <IncludeProject Name="Prototest.Include" Path="Prototest.Include">
   <Files>
     <Compile Include="Program.cs" />
+    <Compile Include="TestRunnerActivity.cs">
+	  <Platforms>Android,Ouya</Platforms>
+	</Compile>
   </Files>
 </IncludeProject>

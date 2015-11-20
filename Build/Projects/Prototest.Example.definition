@@ -7,5 +7,11 @@
   </References>
   <Files>
     <Compile Include="ExampleTestA.cs" />
+    <Compile Include="Resources\Resource.Designer.cs">
+      <Platforms>Android,Ouya</Platforms>
+    </Compile>
+    <Content Include="Properties\AndroidManifest.xml">
+      <Platforms>Android,Ouya</Platforms>
+    </Content>
   </Files>
 </Project>
