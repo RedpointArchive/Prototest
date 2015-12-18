@@ -83,23 +83,28 @@ namespace Prototest.Library
                                     .ToArray());
                             runStateStartTest(x.Type, x.TestMethod);
                             lock (lockObject) ran++;
-                            try
+                            if (Debugger.IsAttached)
                             {
-                                x.TestMethod.Invoke(obj, null);
+                                var action = (Action)Delegate.CreateDelegate(typeof(Action), obj, x.TestMethod);
+                                action();
                                 lock (lockObject) pass++;
                                 runStatePassTest(x.Type, x.TestMethod, pass);
                             }
-                            catch (TargetInvocationException ex)
+                            else
                             {
-                                lock (lockObject) fail++;
-                                runStateFailTest(x.Type, x.TestMethod, bag, ex.InnerException);
-                                anyFail = true;
-                            }
-                            catch (Exception ex)
-                            {
-                                lock (lockObject) fail++;
-                                runStateFailTest(x.Type, x.TestMethod, bag, ex);
-                                anyFail = true;
+                                try
+                                {
+                                    var action = (Action)Delegate.CreateDelegate(typeof(Action), obj, x.TestMethod);
+                                    action();
+                                    lock (lockObject) pass++;
+                                    runStatePassTest(x.Type, x.TestMethod, pass);
+                                }
+                                catch (Exception ex)
+                                {
+                                    lock (lockObject) fail++;
+                                    runStateFailTest(x.Type, x.TestMethod, bag, ex);
+                                    anyFail = true;
+                                }
                             }
                         })).ToArray();
 
