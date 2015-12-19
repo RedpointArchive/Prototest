@@ -22,11 +22,13 @@ namespace Prototest.Include
                 Assembly.GetExecutingAssembly(),
                 RunStateInitTestClassesFound,
                 RunStateInitTestMethodsFound,
+                RunStateInitTestEntriesFound,
                 RunStateStartTest,
                 RunStatePassTest,
                 RunStateFailTest,
                 RunStateSummary,
-                RunStateDetail))
+                RunStateDetail,
+                args))
             {
                 Environment.Exit(0);
             }
@@ -56,20 +58,20 @@ namespace Prototest.Include
             }
         }
 
-        private static void RunStateFailTest(Type type, MethodInfo testMethod, ConcurrentBag<string> bag, Exception ex)
+        private static void RunStateFailTest(string setName, Type type, MethodInfo testMethod, ConcurrentBag<string> bag, Exception ex)
         {
-            WriteOutput("## fail " + type.FullName + "." + testMethod.Name + ": " + ex);
-            bag.Add("fail " + type.FullName + "." + testMethod.Name + ": " + ex);
+            WriteOutput("## fail " + setName + ":" + type.FullName + "." + testMethod.Name + ": " + ex);
+            bag.Add("fail " + setName + ":" + type.FullName + "." + testMethod.Name + ": " + ex);
         }
 
-        private static void RunStatePassTest(Type type, MethodInfo testMethod, int pass)
+        private static void RunStatePassTest(string setName, Type type, MethodInfo testMethod, int pass)
         {
-            WriteOutput("## pass " + type.FullName + "." + testMethod.Name);
+            WriteOutput("## pass " + setName + ":" + type.FullName + "." + testMethod.Name);
         }
 
-        private static void RunStateStartTest(Type type, MethodInfo testMethod)
+        private static void RunStateStartTest(string setName, Type type, MethodInfo testMethod)
         {
-            WriteOutput("## start " + type.FullName + "." + testMethod.Name);
+            WriteOutput("## start " + setName + ":" + type.FullName + "." + testMethod.Name);
         }
 
         private static void RunStateInitTestMethodsFound(int count)
@@ -81,7 +83,12 @@ namespace Prototest.Include
         {
             WriteOutput("## init " + count + " test classes found");
         }
-        
+
+        private static void RunStateInitTestEntriesFound(int count)
+        {
+            WriteOutput("## init " + count + " test entries found");
+        }
+
         private static void WriteOutput(string msg)
         {
             Console.WriteLine(msg);

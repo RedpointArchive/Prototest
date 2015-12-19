@@ -17,5 +17,12 @@
     <Compile Include="Version1\Assert.cs" />
     <Compile Include="Version1\IAssert.cs" />
     <Compile Include="Version1\ICategorize.cs" />
+    <Compile Include="Version11\DefaultTestSetProvider.cs" />
+    <Compile Include="Version11\ITestSetProvider.cs" />
+    <Compile Include="Version11\ITestSummaryConsumer.cs" />
+    <Compile Include="Version11\TestInputEntry.cs" />
+    <Compile Include="Version11\TestResult.cs" />
+    <Compile Include="Version11\TestSet.cs" />
+    <Compile Include="Version11\TestSetEntry.cs" />
   </Files>
 </Project>

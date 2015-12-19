@@ -35,14 +35,17 @@ namespace Prototest.Include
 
         public void RunTests()
         {
-            Prototest.Library.Runner.Run(Assembly.GetExecutingAssembly(),
+            Prototest.Library.Runner.Run(
+                Assembly.GetExecutingAssembly(),
                 RunStateInitTestClassesFound,
                 RunStateInitTestMethodsFound,
+                RunStateInitTestEntriesFound,
                 RunStateStartTest,
                 RunStatePassTest,
                 RunStateFailTest,
                 RunStateSummary,
-                RunStateDetail);
+                RunStateDetail,
+                new string[0]);
         }
 
         private void RunStateSummary(bool anyFail, int ran, int fail, int pass)
@@ -54,26 +57,30 @@ namespace Prototest.Include
         {
         }
 
-        private void RunStateFailTest(Type type, MethodInfo testMethod, ConcurrentBag<string> bag, Exception ex)
+        private void RunStateFailTest(string setName, Type type, MethodInfo testMethod, ConcurrentBag<string> bag, Exception ex)
         {
         }
 
-        private void RunStatePassTest(Type type, MethodInfo testMethod, int pass)
+        private void RunStatePassTest(string setName, Type type, MethodInfo testMethod, int pass)
         {
         }
 
-        private void RunStateStartTest(Type type, MethodInfo testMethod)
+        private void RunStateStartTest(string setName, Type type, MethodInfo testMethod)
         {
             runStateTextView.Text = "... " + testMethod.Name;
         }
 
         private void RunStateInitTestMethodsFound(int count)
         {
-            runStateTextView.Text = count + " to run";
         }
 
         private void RunStateInitTestClassesFound(int count)
         {
+        }
+
+        private void RunStateInitTestEntriesFound(int count)
+        {
+            runStateTextView.Text = count + " to run";
         }
     }
 }
