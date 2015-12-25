@@ -116,7 +116,7 @@ namespace Prototest.Library
                                     .ToArray());
                             runStateStartTest(set.Name, x.TestClass, x.TestMethod);
                             lock (lockObject) ran++;
-                            if (Debugger.IsAttached && !x.AllowFail && false)
+                            if (Debugger.IsAttached && !x.AllowFail)
                             {
                                 x.RunTestMethod(obj);
                                 lock (lockObject) pass++;
