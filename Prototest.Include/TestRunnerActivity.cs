@@ -36,7 +36,7 @@ namespace Prototest.Include
 
         public void RunTests()
         {
-            Prototest.Library.Version11.DefaultTestRunner.Run(
+			new Prototest.Library.Version11.DefaultTestRunner().Run(
                 Assembly.GetExecutingAssembly(),
                 this,
                 new string[0]);
