@@ -6,6 +6,7 @@
     <Reference Include="Prototest" />
   </References>
   <Files>
+    <Compile Include="CategoryTestA.cs" />
     <Compile Include="ExampleTestA.cs" />
     <Compile Include="Resources\Resource.Designer.cs">
       <Platforms>Android,Ouya</Platforms>

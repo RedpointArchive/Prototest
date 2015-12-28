@@ -5,6 +5,6 @@ namespace Prototest.Library.Version1
 {
     public interface ICategorize
     {
-        void Method(string category, Expression<Action> method);
+        void Method(string category, Action method);
     }
 }

@@ -9,6 +9,7 @@ namespace Prototest.Library.Version11
         public ConstructorInfo Constructor;
 
         public List<MethodInfo> TestMethods;
+
         public Type Type;
     }
 }

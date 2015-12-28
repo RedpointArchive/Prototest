@@ -3,4 +3,7 @@
   <Name>Prototest</Name>
   <DefaultAction>resync</DefaultAction>
   <GenerateNuGetRepositories>true</GenerateNuGetRepositories>
+  <Packages>
+    <Package Uri="https://protobuild.org/hach-que/NDesk.Options" Folder="NDesk.Options" GitRef="master" />
+  </Packages>
 </Module>

@@ -1,9 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Prototest.Library.Version11
 {
     public interface ITestSetProvider
     {
-        List<TestSet> GetTestSets(List<TestInputEntry> classes);
+        List<TestSet> GetTestSets(List<TestInputEntry> classes, Dictionary<Type, object> assertTypes);
     }
 }

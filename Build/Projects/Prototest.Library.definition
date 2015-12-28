@@ -3,12 +3,14 @@
   <References>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="NDesk.Options" />
   </References>
   <Files>
     <AndroidResource Include="Resources\layout\TestRunner.axml">
       <SubType>AndroidResource</SubType>
       <Platforms>Android,Ouya</Platforms>
     </AndroidResource>
+    <Compile Include="IVersionedTestRunner.cs" />
     <Compile Include="PrototestFailureException.cs" />
     <Compile Include="Resources\Resource.Designer.cs">
       <Platforms>Android,Ouya</Platforms>
@@ -17,12 +19,19 @@
     <Compile Include="Version1\Assert.cs" />
     <Compile Include="Version1\IAssert.cs" />
     <Compile Include="Version1\ICategorize.cs" />
+    <Compile Include="Version11\Categorize.cs" />
+    <Compile Include="Version11\CategorizedTestSetProvider.cs" />
+    <Compile Include="Version11\ConsoleTestConnector.cs" />
+    <Compile Include="Version11\DefaultTestRunner.cs" />
     <Compile Include="Version11\DefaultTestSetProvider.cs" />
+    <Compile Include="Version11\ITestConnector.cs" />
+    <Compile Include="Version11\ITestRunner.cs" />
     <Compile Include="Version11\ITestSetProvider.cs" />
     <Compile Include="Version11\ITestSummaryConsumer.cs" />
     <Compile Include="Version11\TestInputEntry.cs" />
     <Compile Include="Version11\TestResult.cs" />
     <Compile Include="Version11\TestSet.cs" />
     <Compile Include="Version11\TestSetEntry.cs" />
+    <Compile Include="Version11\Version11TestRunner.cs" />
   </Files>
 </Project>
