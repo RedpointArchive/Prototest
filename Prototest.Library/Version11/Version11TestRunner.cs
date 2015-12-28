@@ -25,6 +25,16 @@ namespace Prototest.Library.Version11
         {
             return new ConsoleTestConnector();
         }
+#elif PLATFORM_IOS
+        private ITestConnector GetTestConnector()
+        {
+            return null;
+        }
+#elif PLATFORM_ANDROID
+        private ITestConnector GetTestConnector()
+        {
+            return null;
+        }
 #endif
     }
 }

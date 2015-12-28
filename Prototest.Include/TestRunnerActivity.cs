@@ -11,12 +11,13 @@ using Android.OS;
 using Android.Runtime;
 using Android.Views;
 using Android.Widget;
+using Prototest.Library.Version11;
 using Resource = Prototest.Library.Resource;
 
 namespace Prototest.Include
 {
     [Activity(MainLauncher = true)]
-    public class TestRunnerActivity : Activity
+    public class TestRunnerActivity : Activity, ITestConnector
     {
         private TextView runStateTextView;
 
@@ -35,52 +36,45 @@ namespace Prototest.Include
 
         public void RunTests()
         {
-            Prototest.Library.Runner.Run(
+            Prototest.Library.Version11.DefaultTestRunner.Run(
                 Assembly.GetExecutingAssembly(),
-                RunStateInitTestClassesFound,
-                RunStateInitTestMethodsFound,
-                RunStateInitTestEntriesFound,
-                RunStateStartTest,
-                RunStatePassTest,
-                RunStateFailTest,
-                RunStateSummary,
-                RunStateDetail,
+                this,
                 new string[0]);
         }
 
-        private void RunStateSummary(bool anyFail, int ran, int fail, int pass)
-        {
-            runStateTextView.Text = pass + " Pass, " + fail + " Fail, " + ran + " Ran";
-        }
-
-        private void RunStateDetail(bool anyFail, ConcurrentBag<string> bag)
+        public void InitTestClassesFound(int testClasses)
         {
         }
 
-        private void RunStateFailTest(string setName, Type type, MethodInfo testMethod, ConcurrentBag<string> bag, Exception ex)
+        public void InitTestMethodsFound(int testMethods)
         {
         }
 
-        private void RunStatePassTest(string setName, Type type, MethodInfo testMethod, int pass)
+        public void InitTestEntriesFound(int testEntries)
         {
+            runStateTextView.Text = testEntries + " to run";
         }
 
-        private void RunStateStartTest(string setName, Type type, MethodInfo testMethod)
+        public void TestStarted(string setName, Type testClass, MethodInfo testMethod)
         {
             runStateTextView.Text = "... " + testMethod.Name;
         }
 
-        private void RunStateInitTestMethodsFound(int count)
+        public void TestPassed(string setName, Type testClass, MethodInfo testMethod, int testsPassed)
         {
         }
 
-        private void RunStateInitTestClassesFound(int count)
+        public void TestFailed(string setName, Type testClass, MethodInfo testMethod, ConcurrentBag<string> errors, Exception testFailure)
         {
         }
 
-        private void RunStateInitTestEntriesFound(int count)
+        public void Summary(bool anyFail, int ran, int fail, int pass)
         {
-            runStateTextView.Text = count + " to run";
+            runStateTextView.Text = pass + " Pass, " + fail + " Fail, " + ran + " Ran";
+        }
+
+        public void Details(bool anyFail, ConcurrentBag<string> details)
+        {
         }
     }
 }
