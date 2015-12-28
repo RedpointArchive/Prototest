@@ -1,4 +1,6 @@
-﻿using System;
+﻿#if !PLATFORM_IOS && !PLATFORM_ANDROID
+
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -44,3 +46,5 @@ namespace Prototest.Library
         }
     }
 }
+
+#endif

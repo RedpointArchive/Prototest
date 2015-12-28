@@ -3,7 +3,14 @@
   <Files>
     <Compile Include="Program.cs" />
     <Compile Include="TestRunnerActivity.cs">
-	  <Platforms>Android,Ouya</Platforms>
-	</Compile>
+      <Platforms>Android,Ouya</Platforms>
+    </Compile>
+    <Compile Include="AppDelegate.cs">
+      <Platforms>iOS,tvOS</Platforms>
+    </Compile>
+    <None Include="Info.plist">
+      <Platforms>iOS,tvOS</Platforms>
+      <Link />
+    </None>
   </Files>
 </IncludeProject>

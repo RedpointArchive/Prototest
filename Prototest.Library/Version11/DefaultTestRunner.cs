@@ -7,7 +7,9 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+#if !PLATFORM_IOS && !PLATFORM_ANDROID
 using NDesk.Options;
+#endif
 using Prototest.Library.Version1;
 
 namespace Prototest.Library.Version11
@@ -18,6 +20,9 @@ namespace Prototest.Library.Version11
         {
             var noDefaultSet = false;
             var categories = new List<string>();
+
+#if !PLATFORM_IOS && !PLATFORM_ANDROID
+
             var options = new OptionSet
             {
                 {"no-default-set", x => noDefaultSet = true},
@@ -25,6 +30,8 @@ namespace Prototest.Library.Version11
             };
 
             options.Parse(args);
+
+#endif
 
             var assertTypes = new Dictionary<Type, object>
             {
@@ -82,7 +89,7 @@ namespace Prototest.Library.Version11
 
             if (!noDefaultSet)
             {
-                setTypes = types.Concat(typeof(Runner).Assembly.GetTypes());
+				setTypes = types.Concat(typeof(DefaultTestRunner).Assembly.GetTypes());
             }
 
             var sets = new List<TestSet>();
