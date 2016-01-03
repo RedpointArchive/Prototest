@@ -14,5 +14,8 @@
     <Content Include="Properties\AndroidManifest.xml">
       <Platforms>Android,Ouya</Platforms>
     </Content>
+    <None Include="Info.plist">
+      <Platforms>iOS,MacOS</Platforms>
+    </None>
   </Files>
 </Project>
