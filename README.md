@@ -92,7 +92,7 @@ Features
 How to Contribute
 --------------------
 
-To contribute to Protogame, submit a pull request to `RedpointGames/Prototest`.
+To contribute to Prototest, submit a pull request to `RedpointGames/Prototest`.
 
 The developer chat is hosted on [Gitter](https://gitter.im/RedpointGames/Prototest)
 
@@ -106,7 +106,7 @@ To provide feedback or get support about issues, please file a GitHub issue on t
 License Information
 ---------------------
 
-Protogame is licensed under the MIT license.
+Prototest is licensed under the MIT license.
 
 ```
 Copyright (c) 2015 Redpoint Games Pty Ltd
