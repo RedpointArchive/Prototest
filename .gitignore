@@ -6,3 +6,4 @@ obj/
 *.speccache
 *.csproj.user
 *.bak
+*.nupkg
