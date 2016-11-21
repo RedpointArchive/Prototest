@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project Name="Prototest.Example" Path="Prototest.Example" Type="Console">
+<Project Name="Prototest.Example" Path="Prototest.Example" Type="Console" SkipAutopackage="True">
   <References>
     <Reference Include="System" />
     <Reference Include="System.Core" />
