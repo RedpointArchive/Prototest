@@ -1,3 +1,4 @@
+#if PLATFORM_ANDROID
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -78,3 +79,4 @@ namespace Prototest.Include
         }
     }
 }
+#endif
