@@ -37,6 +37,14 @@ A more extensive example can be found in the repository.
 Getting Started
 ------------------
 
+## NuGet
+
+Install Prototest into your project using NuGet by installing the [Prototest](https://www.nuget.org/packages/Prototest/) package.
+
+You will also need to install the `NDesk.Options` package.
+
+## Protobuild
+
 Install Prototest into your project using [Protobuild](https://protobuild.org/), like so:
 
 ```
