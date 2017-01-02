@@ -86,8 +86,10 @@ namespace Prototest.Library.Version12
             var pass = 0;
             var fail = 0;
 #if !PLATFORM_UNITY
-            var bag = new ConcurrentBag<string>();
-            var results = new ConcurrentBag<TestResult>();
+            var bagConcurrent = new ConcurrentBag<string>();
+            var resultsConcurrent = new ConcurrentBag<Version11.TestResult>();
+            var bag = new Net45ConcurrentCollection<string>(bagConcurrent);
+            var results = new Net45ConcurrentCollection<Version11.TestResult>(resultsConcurrent);
 #else
             var bagList = new List<string>();
             var resultsList = new List<Version11.TestResult>();
