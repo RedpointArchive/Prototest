@@ -33,5 +33,13 @@
     <Compile Include="Version11\TestSet.cs" />
     <Compile Include="Version11\TestSetEntry.cs" />
     <Compile Include="Version11\Version11TestRunner.cs" />
+    <Compile Include="Version12\ConsoleTestConnector.cs" />
+    <Compile Include="Version12\DefaultTestRunner.cs" />
+    <Compile Include="Version12\IConcurrentCollection.cs" />
+    <Compile Include="Version12\ITestConnector.cs" />
+    <Compile Include="Version12\ITestRunner.cs" />
+    <Compile Include="Version12\Net35ConcurrentAccessor.cs" />
+    <Compile Include="Version12\Net45ConcurrentAccessor.cs" />
+    <Compile Include="Version12\Version12TestRunner.cs" />
   </Files>
 </Project>

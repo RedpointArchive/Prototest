@@ -1,17 +1,10 @@
-﻿#if !PLATFORM_UNITY
-
-using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
+﻿using System;
 using System.Diagnostics;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Prototest.Library.Version11
+namespace Prototest.Library.Version12
 {
-#if !PLATFORM_IOS && !PLATFORM_ANDROID
+#if !PLATFORM_IOS && !PLATFORM_ANDROID && !PLATFORM_UNITY
     public class ConsoleTestConnector : ITestConnector
     {
         public void InitTestClassesFound(int testClasses)
@@ -39,7 +32,7 @@ namespace Prototest.Library.Version11
             WriteOutput("## pass " + setName + ":" + testClass.FullName + "." + testMethod.Name);
         }
 
-        public void TestFailed(string setName, Type testClass, MethodInfo testMethod, ConcurrentBag<string> errors, Exception testFailure)
+        public void TestFailed(string setName, Type testClass, MethodInfo testMethod, IConcurrentCollection<string> errors, Exception testFailure)
         {
             WriteOutput("## fail " + setName + ":" + testClass.FullName + "." + testMethod.Name + ": " + testFailure);
             errors.Add("fail " + setName + ":" + testClass.FullName + "." + testMethod.Name + ": " + testFailure);
@@ -54,7 +47,7 @@ namespace Prototest.Library.Version11
             WriteOutput(end);
         }
 
-        public void Details(bool anyFail, ConcurrentBag<string> details)
+        public void Details(bool anyFail, IConcurrentCollection<string> details)
         {
             if (anyFail)
             {
@@ -73,5 +66,3 @@ namespace Prototest.Library.Version11
     }
 #endif
 }
-
-#endif

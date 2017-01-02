@@ -1,10 +1,7 @@
-﻿#if !PLATFORM_UNITY
-
-using System;
-using System.Collections.Concurrent;
+﻿using System;
 using System.Reflection;
 
-namespace Prototest.Library.Version11
+namespace Prototest.Library.Version12
 {
     public interface ITestConnector
     {
@@ -18,13 +15,11 @@ namespace Prototest.Library.Version11
 
         void TestPassed(string setName, Type testClass, MethodInfo testMethod, int testsPassed);
 
-        void TestFailed(string setName, Type testClass, MethodInfo testMethod, ConcurrentBag<string> errors,
+        void TestFailed(string setName, Type testClass, MethodInfo testMethod, IConcurrentCollection<string> errors,
             Exception testFailure);
 
         void Summary(bool anyFail, int ran, int fail, int pass);
 
-        void Details(bool anyFail, ConcurrentBag<string> details);
+        void Details(bool anyFail, IConcurrentCollection<string> details);
     }
 }
-
-#endif

@@ -1,8 +1,6 @@
-﻿#if !PLATFORM_UNITY
+﻿using System.Reflection;
 
-using System.Reflection;
-
-namespace Prototest.Library.Version11
+namespace Prototest.Library.Version12
 {
     public interface ITestRunner
     {
@@ -12,5 +10,3 @@ namespace Prototest.Library.Version11
             string[] args);
     }
 }
-
-#endif

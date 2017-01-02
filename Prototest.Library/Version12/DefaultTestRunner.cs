@@ -1,20 +1,22 @@
-﻿#if !PLATFORM_UNITY
-
-using System;
+﻿using System;
+#if !PLATFORM_UNITY
 using System.Collections.Concurrent;
+#endif
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Text;
+#if !PLATFORM_UNITY
 using System.Threading.Tasks;
+#endif
 #if !PLATFORM_IOS && !PLATFORM_ANDROID && !PLATFORM_UNITY
 using NDesk.Options;
 #endif
 using Prototest.Library.Version1;
 
-namespace Prototest.Library.Version11
+namespace Prototest.Library.Version12
 {
     public class DefaultTestRunner : ITestRunner
     {
@@ -38,10 +40,10 @@ namespace Prototest.Library.Version11
             var assertTypes = new Dictionary<Type, object>
             {
                 {typeof (IAssert), new Assert()},
-                {typeof(ICategorize), new Categorize(categories) }
+                {typeof(ICategorize), new Version11.Categorize(categories) }
             };
 
-            var testClasses = new List<TestInputEntry>();
+            var testClasses = new List<Version11.TestInputEntry>();
 
             var types = assembly.GetTypes();
             foreach (var type in types)
@@ -61,7 +63,7 @@ namespace Prototest.Library.Version11
                 var parameters = constructor.GetParameters();
                 if (parameters.Length > 0 && parameters.All(x => assertTypes.Keys.Contains(x.ParameterType)))
                 {
-                    var testClass = new TestInputEntry
+                    var testClass = new Version11.TestInputEntry
                     {
                         Constructor = constructor,
                         TestMethods = new List<MethodInfo>(),
@@ -87,8 +89,10 @@ namespace Prototest.Library.Version11
             var bag = new ConcurrentBag<string>();
             var results = new ConcurrentBag<TestResult>();
 #else
-            var bag = new List<string>();
-            var results = new List<TestResult>();
+            var bagList = new List<string>();
+            var resultsList = new List<Version11.TestResult>();
+            var bag = new Net35ConcurrentCollection<string>(bagList);
+            var results = new Net35ConcurrentCollection<Version11.TestResult>(resultsList);
 #endif
             var anyFail = false;
 
@@ -99,23 +103,23 @@ namespace Prototest.Library.Version11
 				setTypes = types.Concat(typeof(DefaultTestRunner).Assembly.GetTypes());
             }
 
-            var sets = new List<TestSet>();
+            var sets = new List<Version11.TestSet>();
             foreach (
                 var type in
                     setTypes
-                        .Where(x => typeof(ITestSetProvider).IsAssignableFrom(x) && !x.IsInterface && !x.IsAbstract))
+                        .Where(x => typeof(Version11.ITestSetProvider).IsAssignableFrom(x) && !x.IsInterface && !x.IsAbstract))
             {
-                var provider = (ITestSetProvider)Activator.CreateInstance(type);
+                var provider = (Version11.ITestSetProvider)Activator.CreateInstance(type);
                 sets.AddRange(provider.GetTestSets(testClasses, assertTypes));
             }
 
-            var summaryConsumers = new List<ITestSummaryConsumer>();
+            var summaryConsumers = new List<Version11.ITestSummaryConsumer>();
             foreach (
                 var type in
                     types.Where(
-                        x => typeof(ITestSummaryConsumer).IsAssignableFrom(x) && !x.IsInterface && !x.IsAbstract))
+                        x => typeof(Version11.ITestSummaryConsumer).IsAssignableFrom(x) && !x.IsInterface && !x.IsAbstract))
             {
-                summaryConsumers.Add((ITestSummaryConsumer)Activator.CreateInstance(type));
+                summaryConsumers.Add((Version11.ITestSummaryConsumer)Activator.CreateInstance(type));
             }
 
             connector.InitTestEntriesFound(sets.Sum(x => x.Entries.Count));
@@ -137,7 +141,7 @@ namespace Prototest.Library.Version11
                                 x.RunTestMethod(obj);
                                 lock (lockObject) pass++;
                                 connector.TestPassed(set.Name, x.TestClass, x.TestMethod, pass);
-                                results.Add(new TestResult
+                                results.Add(new Version11.TestResult
                                 {
                                     Set = set,
                                     Entry = x,
@@ -152,7 +156,7 @@ namespace Prototest.Library.Version11
                                     x.RunTestMethod(obj);
                                     lock (lockObject) pass++;
                                     connector.TestPassed(set.Name, x.TestClass, x.TestMethod, pass);
-                                    results.Add(new TestResult
+                                    results.Add(new Version11.TestResult
                                     {
                                         Set = set,
                                         Entry = x,
@@ -164,7 +168,7 @@ namespace Prototest.Library.Version11
                                 {
                                     lock (lockObject) fail++;
                                     connector.TestFailed(set.Name, x.TestClass, x.TestMethod, bag, ex);
-                                    results.Add(new TestResult
+                                    results.Add(new Version11.TestResult
                                     {
                                         Set = set,
                                         Entry = x,
@@ -201,7 +205,9 @@ namespace Prototest.Library.Version11
             connector.Summary(anyFail, ran, fail, pass);
             connector.Details(anyFail, bag);
 
+#if !PLATFORM_UNITY
             var resultsList = results.ToList();
+#endif
             foreach (var consumer in summaryConsumers)
             {
                 consumer.HandleResults(resultsList);
@@ -211,5 +217,3 @@ namespace Prototest.Library.Version11
         }
     }
 }
-
-#endif
