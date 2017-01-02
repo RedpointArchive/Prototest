@@ -1,10 +1,11 @@
 #if PLATFORM_IOS
 using UIKit;
 #elif PLATFORM_ANDROID
-#elif PLATFORM_UNITY
 #else
 using System;
+#if !PLATFORM_UNITY
 using System.Collections.Concurrent;
+#endif
 using System.Diagnostics;
 using System.Reflection;
 #endif
@@ -18,7 +19,6 @@ namespace Prototest.Include
 #if PLATFORM_IOS
             UIApplication.Main(args, null, "AppDelegate");
 #elif PLATFORM_ANDROID
-#elif PLATFORM_UNITY
 #else
             if (Prototest.Library.Runner.Run(
                 Assembly.GetExecutingAssembly(),

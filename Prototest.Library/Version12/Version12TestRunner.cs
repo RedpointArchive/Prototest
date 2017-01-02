@@ -31,11 +31,6 @@ namespace Prototest.Library.Version12
         {
             return null;
         }
-#elif PLATFORM_UNITY
-        private ITestConnector GetTestConnector()
-        {
-            return null;
-        }
 #else
         private ITestConnector GetTestConnector()
         {

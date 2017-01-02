@@ -12,6 +12,10 @@ endif
 
 generate
 build
+if host Windows
+  execute Prototest.Example
+  native-execute cmd.exe /C "Prototest.Example\bin\Unity\AnyCPU\Debug\Prototest.Example.exe"
+endif
 
 set package-format nuget/zip
 
