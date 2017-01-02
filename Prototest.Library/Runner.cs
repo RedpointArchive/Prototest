@@ -1,4 +1,4 @@
-﻿#if !PLATFORM_IOS && !PLATFORM_ANDROID
+﻿#if !PLATFORM_IOS && !PLATFORM_ANDROID && !PLATFORM_UNITY
 
 using System;
 using System.Collections.Concurrent;
@@ -20,7 +20,7 @@ namespace Prototest.Library
             string[] args)
         {
             // Sets the default in this version.
-            var version = "11";
+            var version = "12";
 
             var options = new OptionSet
             {

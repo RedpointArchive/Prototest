@@ -11,6 +11,6 @@
   <DefaultAction>resync</DefaultAction>
   <GenerateNuGetRepositories>true</GenerateNuGetRepositories>
   <Packages>
-    <Package Uri="https://protobuild.org/hach-que/NDesk.Options" Folder="NDesk.Options" GitRef="master" />
+    <Package Repository="https://api.nuget.org/v3/index.json" Package="NDesk.Options.Redpoint" Version="master" Folder="NDesk.Options" />
   </Packages>
 </Module>

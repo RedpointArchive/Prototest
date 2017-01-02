@@ -1,16 +1,14 @@
-﻿#if !PLATFORM_UNITY
+﻿using System.Reflection;
 
-using System.Reflection;
-
-namespace Prototest.Library.Version11
+namespace Prototest.Library.Version12
 {
-    public class Version11TestRunner : IVersionedTestRunner
+    public class Version12TestRunner : IVersionedTestRunner
     {
         public string Version
         {
             get
             {
-                return "11";
+                return "12";
             }
         }
 
@@ -23,12 +21,7 @@ namespace Prototest.Library.Version11
                 args);
         }
 
-#if !PLATFORM_IOS && !PLATFORM_ANDROID
-        private ITestConnector GetTestConnector()
-        {
-            return new ConsoleTestConnector();
-        }
-#elif PLATFORM_IOS
+#if PLATFORM_IOS
         private ITestConnector GetTestConnector()
         {
             return null;
@@ -38,8 +31,16 @@ namespace Prototest.Library.Version11
         {
             return null;
         }
+#elif PLATFORM_UNITY
+        private ITestConnector GetTestConnector()
+        {
+            return null;
+        }
+#else
+        private ITestConnector GetTestConnector()
+        {
+            return new ConsoleTestConnector();
+        }
 #endif
     }
 }
-
-#endif
