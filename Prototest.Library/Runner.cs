@@ -1,13 +1,16 @@
-﻿#if !PLATFORM_IOS && !PLATFORM_ANDROID && !PLATFORM_UNITY
+﻿#if !PLATFORM_IOS && !PLATFORM_ANDROID
 
 using System;
+#if !PLATFORM_UNITY
 using System.Collections.Concurrent;
+#endif
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
-using System.Threading.Tasks;
+#if !PLATFORM_UNITY
 using NDesk.Options;
+#endif
 using Prototest.Library.Version1;
 using Prototest.Library.Version11;
 
@@ -22,12 +25,16 @@ namespace Prototest.Library
             // Sets the default in this version.
             var version = "12";
 
+#if !PLATFORM_UNITY
             var options = new OptionSet
             {
                 {"version", s => { version = s; }}
             };
 
-            var extra = options.Parse(args);
+            var extra = options.Parse(args).ToArray();
+#else
+            var extra = new string[0];
+#endif
 
             var versionRunner = (from type in typeof (Runner).Assembly.GetTypes()
                 where typeof (IVersionedTestRunner).IsAssignableFrom(type)
@@ -42,7 +49,7 @@ namespace Prototest.Library
                 return false;
             }
 
-            return versionRunner.Run(assembly, extra.ToArray());
+            return versionRunner.Run(assembly, extra);
         }
     }
 }

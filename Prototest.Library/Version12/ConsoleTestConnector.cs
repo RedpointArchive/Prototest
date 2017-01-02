@@ -4,7 +4,7 @@ using System.Reflection;
 
 namespace Prototest.Library.Version12
 {
-#if !PLATFORM_IOS && !PLATFORM_ANDROID && !PLATFORM_UNITY
+#if !PLATFORM_IOS && !PLATFORM_ANDROID
     public class ConsoleTestConnector : ITestConnector
     {
         public void InitTestClassesFound(int testClasses)

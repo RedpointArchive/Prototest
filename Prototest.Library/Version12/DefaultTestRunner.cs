@@ -78,8 +78,11 @@ namespace Prototest.Library.Version12
                 }
             }
 
-            connector.InitTestClassesFound(testClasses.Count);
-            connector.InitTestMethodsFound(testClasses.Sum(x => x.TestMethods.Count));
+            if (connector != null)
+            {
+                connector.InitTestClassesFound(testClasses.Count);
+                connector.InitTestMethodsFound(testClasses.Sum(x => x.TestMethods.Count));
+            }
 
             var lockObject = new object();
             var ran = 0;
@@ -124,7 +127,10 @@ namespace Prototest.Library.Version12
                 summaryConsumers.Add((Version11.ITestSummaryConsumer)Activator.CreateInstance(type));
             }
 
-            connector.InitTestEntriesFound(sets.Sum(x => x.Entries.Count));
+            if (connector != null)
+            {
+                connector.InitTestEntriesFound(sets.Sum(x => x.Entries.Count));
+            }
 
             foreach (var set in sets)
             {
@@ -136,13 +142,19 @@ namespace Prototest.Library.Version12
                                 x.TestConstructor.GetParameters()
                                     .Select(z => assertTypes[z.ParameterType])
                                     .ToArray());
-                            connector.TestStarted(set.Name, x.TestClass, x.TestMethod);
+                            if (connector != null)
+                            {
+                                connector.TestStarted(set.Name, x.TestClass, x.TestMethod);
+                            }
                             lock (lockObject) ran++;
                             if (Debugger.IsAttached && !x.AllowFail)
                             {
                                 x.RunTestMethod(obj);
                                 lock (lockObject) pass++;
-                                connector.TestPassed(set.Name, x.TestClass, x.TestMethod, pass);
+                                if (connector != null)
+                                {
+                                    connector.TestPassed(set.Name, x.TestClass, x.TestMethod, pass);
+                                }
                                 results.Add(new Version11.TestResult
                                 {
                                     Set = set,
@@ -157,7 +169,10 @@ namespace Prototest.Library.Version12
                                 {
                                     x.RunTestMethod(obj);
                                     lock (lockObject) pass++;
-                                    connector.TestPassed(set.Name, x.TestClass, x.TestMethod, pass);
+                                    if (connector != null)
+                                    {
+                                        connector.TestPassed(set.Name, x.TestClass, x.TestMethod, pass);
+                                    }
                                     results.Add(new Version11.TestResult
                                     {
                                         Set = set,
@@ -169,7 +184,10 @@ namespace Prototest.Library.Version12
                                 catch (Exception ex)
                                 {
                                     lock (lockObject) fail++;
-                                    connector.TestFailed(set.Name, x.TestClass, x.TestMethod, bag, ex);
+                                    if (connector != null)
+                                    {
+                                        connector.TestFailed(set.Name, x.TestClass, x.TestMethod, bag, ex);
+                                    }
                                     results.Add(new Version11.TestResult
                                     {
                                         Set = set,
@@ -204,8 +222,11 @@ namespace Prototest.Library.Version12
 #endif
             }
 
-            connector.Summary(anyFail, ran, fail, pass);
-            connector.Details(anyFail, bag);
+            if (connector != null)
+            {
+                connector.Summary(anyFail, ran, fail, pass);
+                connector.Details(anyFail, bag);
+            }
 
 #if !PLATFORM_UNITY
             var resultsList = results.ToList();
