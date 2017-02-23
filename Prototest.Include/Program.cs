@@ -20,6 +20,13 @@ namespace Prototest.Include
             UIApplication.Main(args, null, "AppDelegate");
 #elif PLATFORM_ANDROID
 #else
+#if PLATFORM_MACOS
+#if PLATFORM_MACOS_LEGACY
+            MonoMac.AppKit.NSApplication.Init();
+#else
+            AppKit.NSApplication.Init();
+#endif
+#endif
             if (Prototest.Library.Runner.Run(
                 Assembly.GetExecutingAssembly(),
                 args))
