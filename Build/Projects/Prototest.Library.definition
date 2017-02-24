@@ -41,5 +41,7 @@
     <Compile Include="Version12\Net35ConcurrentAccessor.cs" />
     <Compile Include="Version12\Net45ConcurrentAccessor.cs" />
     <Compile Include="Version12\Version12TestRunner.cs" />
+    <Compile Include="Version13\IThreadControl.cs" />
+    <Compile Include="Version13\ThreadControl.cs" />
   </Files>
 </Project>

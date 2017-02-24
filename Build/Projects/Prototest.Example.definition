@@ -11,6 +11,8 @@
     <Compile Include="Resources\Resource.Designer.cs">
       <Platforms>Android,Ouya</Platforms>
     </Compile>
+    <Compile Include="SingleThreadCategoryTestA.cs" />
+    <Compile Include="SingleThreadTestA.cs" />
     <Content Include="Properties\AndroidManifest.xml">
       <Platforms>Android,Ouya</Platforms>
     </Content>

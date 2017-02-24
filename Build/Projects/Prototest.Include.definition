@@ -8,9 +8,13 @@
     <Compile Include="AppDelegate.cs">
       <Platforms>iOS,tvOS</Platforms>
     </Compile>
-    <None Include="Info.plist">
+    <None Include="iOS/Info.plist">
       <Platforms>iOS,tvOS</Platforms>
-      <Link />
+      <Link>Info.plist</Link>
+    </None>
+    <None Include="MacOS/Info.plist">
+      <Platforms>MacOS</Platforms>
+      <Link>Info.plist</Link>
     </None>
   </Files>
 </IncludeProject>

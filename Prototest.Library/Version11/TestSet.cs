@@ -7,5 +7,7 @@ namespace Prototest.Library.Version11
         public string Name { get; set; }
 
         public List<TestSetEntry> Entries { get; set; }
+
+        public bool RunSingleThreadedOnMainThread { get; set; }
     }
 }

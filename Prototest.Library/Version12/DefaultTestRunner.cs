@@ -15,6 +15,7 @@ using System.Threading.Tasks;
 using NDesk.Options;
 #endif
 using Prototest.Library.Version1;
+using Prototest.Library.Version13;
 
 namespace Prototest.Library.Version12
 {
@@ -40,7 +41,8 @@ namespace Prototest.Library.Version12
             var assertTypes = new Dictionary<Type, object>
             {
                 {typeof (IAssert), new Assert()},
-                {typeof(ICategorize), new Version11.Categorize(categories) }
+                {typeof(ICategorize), new Version11.Categorize(categories) },
+                {typeof(IThreadControl), new ThreadControl()}
             };
 
             var testClasses = new List<Version11.TestInputEntry>();
@@ -204,7 +206,7 @@ namespace Prototest.Library.Version12
                         })).ToArray();
 
 #if !PLATFORM_UNITY
-                if (Debugger.IsAttached)
+                if (Debugger.IsAttached || set.RunSingleThreadedOnMainThread)
                 {
                     // Run in single thread when a debugger is attached to make
                     // diagnosing issues easier.

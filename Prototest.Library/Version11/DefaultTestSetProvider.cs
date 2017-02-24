@@ -1,31 +1,59 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using Prototest.Library.Version1;
+using Prototest.Library.Version13;
 
 namespace Prototest.Library.Version11
 {
     public class DefaultTestSetProvider : ITestSetProvider
     {
-        public List<TestSet> GetTestSets(List<TestInputEntry> classes, Dictionary<Type, object> assertTypes)
+        public List<TestSet> GetTestSets(List<TestInputEntry> entries, Dictionary<Type, object> assertTypes)
         {
+            var e = (from cls in entries
+                     where (cls.Constructor.GetParameters().All(z => z.ParameterType != typeof(ICategorize)))
+                     let obj = cls.Constructor.Invoke(
+                         cls.Constructor.GetParameters()
+                             .Select(z => assertTypes[z.ParameterType])
+                             .ToArray())
+                     let threadControlState = ((ThreadControl)assertTypes[typeof(IThreadControl)]).GetAndClearThreadControlMarked()
+                     from method in cls.TestMethods
+                     select new
+                     {
+                         TestClass = cls.Type,
+                         TestConstructor = cls.Constructor,
+                         TestMethod = method,
+                         RunTestMethod = (Action<object>)(objj => ((Action)Delegate.CreateDelegate(typeof(Action), objj, method))()),
+                         RunOnSingleThread = threadControlState
+                     }).ToList();
+
             return new List<TestSet>
             {
                 new TestSet
                 {
                     Name = "default",
-                    Entries = classes.SelectMany(x => x.TestMethods.Select(
-                        y => new {x.Type, x.Constructor, TestMethod = y}))
-                        .Where(x => x.Constructor.GetParameters().All(z => z.ParameterType != typeof(ICategorize)))
-                        .Where(x => x.TestMethod.GetParameters().Length == 0)
-                        .Select(x => new TestSetEntry
-                        {
-                            TestClass = x.Type,
-                            TestConstructor = x.Constructor,
-                            TestMethod = x.TestMethod,
-                            RunTestMethod = obj => ((Action) Delegate.CreateDelegate(typeof (Action), obj, x.TestMethod))()
-                        }).ToList()
-                }
+                    RunSingleThreadedOnMainThread = false,
+                    Entries = e.Where(x => !x.RunOnSingleThread).Select(x => new TestSetEntry
+                    {
+                        TestClass = x.TestClass,
+                        TestConstructor = x.TestConstructor,
+                        TestMethod = x.TestMethod,
+                        RunTestMethod = x.RunTestMethod
+                    }).ToList()
+                },
+                new TestSet
+                {
+                    Name = "default-singlethreaded",
+                    RunSingleThreadedOnMainThread = true,
+                    Entries = e.Where(x => x.RunOnSingleThread).Select(x => new TestSetEntry
+                    {
+                        TestClass = x.TestClass,
+                        TestConstructor = x.TestConstructor,
+                        TestMethod = x.TestMethod,
+                        RunTestMethod = x.RunTestMethod
+                    }).ToList()
+                },
             };
         }
     }
