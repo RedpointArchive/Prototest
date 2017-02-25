@@ -19,6 +19,7 @@ namespace Prototest.Library.Version11
                              .ToArray())
                      let threadControlState = ((ThreadControl)assertTypes[typeof(IThreadControl)]).GetAndClearThreadControlMarked()
                      from method in cls.TestMethods
+                     where method.GetParameters().Length == 0
                      select new
                      {
                          TestClass = cls.Type,
