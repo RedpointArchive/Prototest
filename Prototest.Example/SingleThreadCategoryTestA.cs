@@ -1,5 +1,6 @@
 ﻿using Prototest.Library.Version1;
 using Prototest.Library.Version13;
+using ICategorize = Prototest.Library.Version1.ICategorize;
 
 namespace Prototest.Example
 {

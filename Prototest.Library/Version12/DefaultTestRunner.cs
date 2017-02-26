@@ -38,11 +38,16 @@ namespace Prototest.Library.Version12
 
 #endif
 
-            var assertTypes = new Dictionary<Type, object>
+            var assert = new Assert();
+            var threadControl = new ThreadControl();
+            var categorize = new Version11.Categorize(categories);
+            var assertTypes = new Dictionary<Type, Func<object>>
             {
-                {typeof (IAssert), new Assert()},
-                {typeof(ICategorize), new Version11.Categorize(categories) },
-                {typeof(IThreadControl), new ThreadControl()}
+                {typeof(IAssert), () => assert},
+                {typeof(Version1.ICategorize), () => categorize},
+                {typeof(Version13.ICategorize), () => categorize},
+                {typeof(IThreadControl), () => threadControl},
+                {typeof(ITestAttachment), () => new TestAttachment()}
             };
 
             var testClasses = new List<Version11.TestInputEntry>();
@@ -117,6 +122,14 @@ namespace Prototest.Library.Version12
                         .Where(x => typeof(Version11.ITestSetProvider).IsAssignableFrom(x) && !x.IsInterface && !x.IsAbstract))
             {
                 var provider = (Version11.ITestSetProvider)Activator.CreateInstance(type);
+                sets.AddRange(provider.GetTestSets(testClasses, assertTypes.ToDictionary(k => k.Key, v => v.Value())));
+            }
+            foreach (
+                var type in
+                    setTypes
+                        .Where(x => typeof(Version13.ITestSetProvider).IsAssignableFrom(x) && !x.IsInterface && !x.IsAbstract))
+            {
+                var provider = (Version13.ITestSetProvider)Activator.CreateInstance(type);
                 sets.AddRange(provider.GetTestSets(testClasses, assertTypes));
             }
 
@@ -140,10 +153,12 @@ namespace Prototest.Library.Version12
                     .Select(x => new Action(
                         () =>
                         {
-                            var obj = x.TestConstructor.Invoke(
-                                x.TestConstructor.GetParameters()
-                                    .Select(z => assertTypes[z.ParameterType])
-                                    .ToArray());
+                            var constructorParameters = x.TestConstructor.GetParameters()
+                                .Select(z => assertTypes[z.ParameterType]())
+                                .ToArray();
+                            var testAttachment = constructorParameters.OfType<ITestAttachment>().FirstOrDefault();
+
+                            var obj = x.TestConstructor.Invoke(constructorParameters);
                             if (connector != null)
                             {
                                 connector.TestStarted(set.Name, x.TestClass, x.TestMethod);
@@ -162,7 +177,8 @@ namespace Prototest.Library.Version12
                                     Set = set,
                                     Entry = x,
                                     Exception = null,
-                                    Passed = true
+                                    Passed = true,
+                                    Attachments = testAttachment != null ? testAttachment.GetAttachments() : new Dictionary<string, object>()
                                 });
                             }
                             else
@@ -180,7 +196,8 @@ namespace Prototest.Library.Version12
                                         Set = set,
                                         Entry = x,
                                         Exception = null,
-                                        Passed = true
+                                        Passed = true,
+                                        Attachments = testAttachment != null ? testAttachment.GetAttachments() : new Dictionary<string, object>()
                                     });
                                 }
                                 catch (Exception ex)
@@ -195,7 +212,8 @@ namespace Prototest.Library.Version12
                                         Set = set,
                                         Entry = x,
                                         Exception = ex,
-                                        Passed = false
+                                        Passed = false,
+                                        Attachments = testAttachment != null ? testAttachment.GetAttachments() : new Dictionary<string, object>()
                                     });
                                     if (!x.AllowFail)
                                     {

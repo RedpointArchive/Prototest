@@ -6,25 +6,25 @@ using Prototest.Library.Version13;
 
 namespace Prototest.Library.Version11
 {
-    public class CategorizedTestSetProvider : ITestSetProvider
+    public class CategorizedTestSetProvider : Version13.ITestSetProvider
     {
-        public List<TestSet> GetTestSets(List<TestInputEntry> entries, Dictionary<Type, object> assertTypes)
+        public List<TestSet> GetTestSets(List<TestInputEntry> entries, Dictionary<Type, Func<object>> assertTypes)
         {
             var e = (from cls in entries
-                     where (cls.Constructor.GetParameters().Any(z => z.ParameterType == typeof(ICategorize)))
+                     where (cls.Constructor.GetParameters().Any(z => z.ParameterType == typeof(Version1.ICategorize) || z.ParameterType == typeof(Version13.ICategorize)))
                      let obj = cls.Constructor.Invoke(
                     cls.Constructor.GetParameters()
-                        .Select(z => assertTypes[z.ParameterType])
+                        .Select(z => assertTypes[z.ParameterType]())
                         .ToArray())
-                let threadControlState = ((ThreadControl)assertTypes[typeof(IThreadControl)]).GetAndClearThreadControlMarked()
+                let threadControlState = ((ThreadControl)assertTypes[typeof(IThreadControl)]()).GetAndClearThreadControlMarked()
                 from method in
-                    ((Categorize) assertTypes[typeof(ICategorize)]).GetAndClearRegisteredMethods()
+                    ((Categorize) assertTypes[typeof(Version1.ICategorize)]()).GetAndClearRegisteredMethods() // The same object is shared between the v1.1 and v1.3 interfaces.
                 select new
                 {
                     TestClass = cls.Type,
                     TestConstructor = cls.Constructor,
                     TestMethod = method.Method,
-                    RunTestMethod = (Action<object>)(z => method()),
+                    RunTestMethod = method,
                     RunOnSingleThread = threadControlState
                 }).ToList();
 

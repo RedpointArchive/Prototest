@@ -6,6 +6,9 @@
     <Reference Include="Prototest" />
   </References>
   <Files>
+    <Compile Include="AttachmentTestA.cs" />
+    <Compile Include="BasicAttachmentTestSummaryConsumer.cs" />
+    <Compile Include="Category13TestA.cs" />
     <Compile Include="CategoryTestA.cs" />
     <Compile Include="ExampleTestA.cs" />
     <Compile Include="Resources\Resource.Designer.cs">

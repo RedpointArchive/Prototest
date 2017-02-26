@@ -41,7 +41,11 @@
     <Compile Include="Version12\Net35ConcurrentAccessor.cs" />
     <Compile Include="Version12\Net45ConcurrentAccessor.cs" />
     <Compile Include="Version12\Version12TestRunner.cs" />
+    <Compile Include="Version13\ICategorize.cs" />
+    <Compile Include="Version13\ITestAttachment.cs" />
+    <Compile Include="Version13\ITestSetProvider.cs" />
     <Compile Include="Version13\IThreadControl.cs" />
+    <Compile Include="Version13\TestAttachment.cs" />
     <Compile Include="Version13\ThreadControl.cs" />
   </Files>
 </Project>

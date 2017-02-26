@@ -7,17 +7,17 @@ using Prototest.Library.Version13;
 
 namespace Prototest.Library.Version11
 {
-    public class DefaultTestSetProvider : ITestSetProvider
+    public class DefaultTestSetProvider : Version13.ITestSetProvider
     {
-        public List<TestSet> GetTestSets(List<TestInputEntry> entries, Dictionary<Type, object> assertTypes)
+        public List<TestSet> GetTestSets(List<TestInputEntry> entries, Dictionary<Type, Func<object>> assertTypes)
         {
             var e = (from cls in entries
-                     where (cls.Constructor.GetParameters().All(z => z.ParameterType != typeof(ICategorize)))
+                     where (cls.Constructor.GetParameters().All(z => z.ParameterType != typeof(Version1.ICategorize) && z.ParameterType != typeof(Version13.ICategorize)))
                      let obj = cls.Constructor.Invoke(
                          cls.Constructor.GetParameters()
-                             .Select(z => assertTypes[z.ParameterType])
+                             .Select(z => assertTypes[z.ParameterType]())
                              .ToArray())
-                     let threadControlState = ((ThreadControl)assertTypes[typeof(IThreadControl)]).GetAndClearThreadControlMarked()
+                     let threadControlState = ((ThreadControl)assertTypes[typeof(IThreadControl)]()).GetAndClearThreadControlMarked()
                      from method in cls.TestMethods
                      where method.GetParameters().Length == 0
                      select new

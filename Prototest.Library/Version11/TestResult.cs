@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Prototest.Library.Version11
 {
@@ -11,5 +12,7 @@ namespace Prototest.Library.Version11
         public bool Passed { get; set; }
 
         public Exception Exception { get; set; }
+        
+        public Dictionary<string, object> Attachments { get; set; }
     }
 }
