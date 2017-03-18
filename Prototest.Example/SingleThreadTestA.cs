@@ -27,10 +27,12 @@ namespace Prototest.Example
             _assert.Equal("hello", "hello");
         }
 
+#if !PLATFORM_PCL
         public void SleepyTest()
         {
             Thread.Sleep(1500);
             _assert.NotEqual("apples", "oranges");
         }
+#endif
     }
 }

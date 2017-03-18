@@ -1,4 +1,4 @@
-﻿#if !PLATFORM_UNITY
+﻿#if !PLATFORM_UNITY && !PLATFORM_PCL
 
 using System;
 using System.Collections.Concurrent;
@@ -9,9 +9,6 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
-#if !PLATFORM_IOS && !PLATFORM_ANDROID && !PLATFORM_UNITY
-using NDesk.Options;
-#endif
 using Prototest.Library.Version1;
 using Prototest.Library.Version13;
 

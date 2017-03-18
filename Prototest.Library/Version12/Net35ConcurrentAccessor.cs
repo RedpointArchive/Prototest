@@ -1,4 +1,4 @@
-﻿#if PLATFORM_UNITY
+﻿#if PLATFORM_UNITY || PLATFORM_PCL
 
 using System.Collections;
 using System.Collections.Generic;

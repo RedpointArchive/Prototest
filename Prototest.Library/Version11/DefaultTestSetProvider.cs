@@ -25,7 +25,11 @@ namespace Prototest.Library.Version11
                          TestClass = cls.Type,
                          TestConstructor = cls.Constructor,
                          TestMethod = method,
+#if PLATFORM_PCL
+                         RunTestMethod = (Action<object>)(objj => ((Action)method.CreateDelegate(typeof(Action), objj))()),
+#else
                          RunTestMethod = (Action<object>)(objj => ((Action)Delegate.CreateDelegate(typeof(Action), objj, method))()),
+#endif
                          RunOnSingleThread = threadControlState
                      }).ToList();
 

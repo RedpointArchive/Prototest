@@ -60,7 +60,9 @@ namespace Prototest.Library.Version12
 
         private void WriteOutput(string msg)
         {
+#if !PLATFORM_PCL
             Console.WriteLine(msg);
+#endif
             Debug.WriteLine(msg);
         }
     }

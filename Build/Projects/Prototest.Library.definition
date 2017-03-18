@@ -15,6 +15,7 @@
     <Compile Include="Resources\Resource.Designer.cs">
       <Platforms>Android,Ouya</Platforms>
     </Compile>
+    <Compile Include="Options.cs" />
     <Compile Include="Runner.cs" />
     <Compile Include="Version1\Assert.cs" />
     <Compile Include="Version1\IAssert.cs" />
