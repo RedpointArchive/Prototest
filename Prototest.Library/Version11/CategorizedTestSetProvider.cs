@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using Prototest.Library.Version1;
 using Prototest.Library.Version13;
 
@@ -23,7 +24,11 @@ namespace Prototest.Library.Version11
                 {
                     TestClass = cls.Type,
                     TestConstructor = cls.Constructor,
+#if PLATFORM_PCL
+                    TestMethod = method.GetMethodInfo(),
+#else
                     TestMethod = method.Method,
+#endif
                     RunTestMethod = method,
                     RunOnSingleThread = threadControlState
                 }).ToList();

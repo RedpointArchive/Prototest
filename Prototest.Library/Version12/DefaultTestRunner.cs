@@ -1,5 +1,5 @@
 ﻿using System;
-#if !PLATFORM_UNITY
+#if !PLATFORM_UNITY && !PLATFORM_PCL
 using System.Collections.Concurrent;
 #endif
 using System.Collections.Generic;
@@ -10,9 +10,6 @@ using System.Reflection;
 using System.Text;
 #if !PLATFORM_UNITY
 using System.Threading.Tasks;
-#endif
-#if !PLATFORM_IOS && !PLATFORM_ANDROID && !PLATFORM_UNITY
-using NDesk.Options;
 #endif
 using Prototest.Library.Version1;
 using Prototest.Library.Version13;
@@ -52,15 +49,29 @@ namespace Prototest.Library.Version12
 
             var testClasses = new List<Version11.TestInputEntry>();
 
+#if PLATFORM_PCL
+            var types = assembly.ExportedTypes.ToList();
+#else
             var types = assembly.GetTypes();
+#endif
             foreach (var type in types)
             {
-                if (type.IsAbstract || type.IsInterface)
+#if PLATFORM_PCL
+                var typeInfo = type.GetTypeInfo();
+#else
+                var typeInfo = type;
+#endif
+
+                if (typeInfo.IsAbstract || typeInfo.IsInterface)
                 {
                     continue;
                 }
 
-                var constructors = type.GetConstructors();
+#if PLATFORM_PCL
+                var constructors = typeInfo.DeclaredConstructors.Where(x => !x.IsStatic).ToArray();
+#else
+                var constructors = typeInfo.GetConstructors();
+#endif
                 if (constructors.Length != 1)
                 {
                     continue;
@@ -77,9 +88,15 @@ namespace Prototest.Library.Version12
                         Type = type
                     };
 
+#if PLATFORM_PCL
+                    testClass.TestMethods = typeInfo.DeclaredMethods
+                        .Where(x => x.IsPublic && !x.IsStatic)
+                        .ToList();
+#else
                     testClass.TestMethods =
                         type.GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly)
                             .ToList();
+#endif
 
                     testClasses.Add(testClass);
                 }
@@ -95,7 +112,7 @@ namespace Prototest.Library.Version12
             var ran = 0;
             var pass = 0;
             var fail = 0;
-#if !PLATFORM_UNITY
+#if !PLATFORM_UNITY && !PLATFORM_PCL
             var bagConcurrent = new ConcurrentBag<string>();
             var resultsConcurrent = new ConcurrentBag<Version11.TestResult>();
             var bag = new Net45ConcurrentCollection<string>(bagConcurrent);
@@ -112,14 +129,14 @@ namespace Prototest.Library.Version12
 
             if (!noDefaultSet)
             {
-				setTypes = types.Concat(typeof(DefaultTestRunner).Assembly.GetTypes());
+				setTypes = types.Concat(GetTypesFromAssembly(GetTypeInfo(typeof(DefaultTestRunner)).Assembly));
             }
 
             var sets = new List<Version11.TestSet>();
             foreach (
                 var type in
                     setTypes
-                        .Where(x => typeof(Version11.ITestSetProvider).IsAssignableFrom(x) && !x.IsInterface && !x.IsAbstract))
+                        .Where(x => GetTypeInfo(typeof(Version11.ITestSetProvider)).IsAssignableFrom(GetTypeInfo(x)) && !GetTypeInfo(x).IsInterface && !GetTypeInfo(x).IsAbstract))
             {
                 var provider = (Version11.ITestSetProvider)Activator.CreateInstance(type);
                 sets.AddRange(provider.GetTestSets(testClasses, assertTypes.ToDictionary(k => k.Key, v => v.Value())));
@@ -127,7 +144,7 @@ namespace Prototest.Library.Version12
             foreach (
                 var type in
                     setTypes
-                        .Where(x => typeof(Version13.ITestSetProvider).IsAssignableFrom(x) && !x.IsInterface && !x.IsAbstract))
+                        .Where(x => GetTypeInfo(typeof(Version13.ITestSetProvider)).IsAssignableFrom(GetTypeInfo(x)) && !GetTypeInfo(x).IsInterface && !GetTypeInfo(x).IsAbstract))
             {
                 var provider = (Version13.ITestSetProvider)Activator.CreateInstance(type);
                 sets.AddRange(provider.GetTestSets(testClasses, assertTypes));
@@ -137,7 +154,7 @@ namespace Prototest.Library.Version12
             foreach (
                 var type in
                     types.Where(
-                        x => typeof(Version11.ITestSummaryConsumer).IsAssignableFrom(x) && !x.IsInterface && !x.IsAbstract))
+                        x => GetTypeInfo(typeof(Version11.ITestSummaryConsumer)).IsAssignableFrom(GetTypeInfo(x)) && !GetTypeInfo(x).IsInterface && !GetTypeInfo(x).IsAbstract))
             {
                 summaryConsumers.Add((Version11.ITestSummaryConsumer)Activator.CreateInstance(type));
             }
@@ -223,7 +240,7 @@ namespace Prototest.Library.Version12
                             }
                         })).ToArray();
 
-#if !PLATFORM_UNITY
+#if !PLATFORM_UNITY && !PLATFORM_PCL
                 if (Debugger.IsAttached || set.RunSingleThreadedOnMainThread)
                 {
                     // Run in single thread when a debugger is attached to make
@@ -233,7 +250,7 @@ namespace Prototest.Library.Version12
                     {
                         task();
                     }
-#if !PLATFORM_UNITY
+#if !PLATFORM_UNITY && !PLATFORM_PCL
                 }
                 else
                 {
@@ -248,7 +265,7 @@ namespace Prototest.Library.Version12
                 connector.Details(anyFail, bag);
             }
 
-#if !PLATFORM_UNITY
+#if !PLATFORM_UNITY && !PLATFORM_PCL
             var resultsList = results.ToList();
 #endif
             foreach (var consumer in summaryConsumers)
@@ -258,5 +275,27 @@ namespace Prototest.Library.Version12
 
             return !anyFail;
         }
+
+#if PLATFORM_PCL
+        private static TypeInfo GetTypeInfo(Type t)
+        {
+            return t.GetTypeInfo();
+        }
+
+        private static Type[] GetTypesFromAssembly(Assembly a)
+        {
+            return a.DefinedTypes.Select(x => x.AsType()).ToArray();
+        }
+#else
+        private static Type GetTypeInfo(Type t)
+        {
+            return t;
+        }
+
+        private static Type[] GetTypesFromAssembly(Assembly a)
+        {
+            return a.GetTypes().ToArray();
+        }
+#endif
     }
 }

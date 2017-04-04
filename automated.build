@@ -1,7 +1,7 @@
 #version 1
 
 if host Windows
-  set target-platforms Windows,Unity
+  set target-platforms Windows,Unity,PCL
 endif
 if host MacOS
   set target-platforms MacOS,iOS,Android

@@ -10,7 +10,4 @@
   <GitRepositoryUrl>https://github.com/RedpointGames/Prototest</GitRepositoryUrl>
   <DefaultAction>resync</DefaultAction>
   <GenerateNuGetRepositories>true</GenerateNuGetRepositories>
-  <Packages>
-    <Package Repository="https://api.nuget.org/v3/index.json" Package="NDesk.Options.Redpoint" Version="master" Folder="NDesk.Options" />
-  </Packages>
 </Module>

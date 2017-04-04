@@ -161,7 +161,11 @@ namespace Prototest.Library.Version1
             {
                 throw new PrototestFailureException("substr or container is null");
             }
+#if PLATFORM_PCL
+            if (container.IndexOf(substr, StringComparison.Ordinal) == -1)
+#else
             if (container.IndexOf(substr, StringComparison.InvariantCulture) == -1)
+#endif
             {
                 throw new PrototestFailureException("substr was not found in container");
             }
@@ -207,7 +211,11 @@ namespace Prototest.Library.Version1
             {
                 throw new PrototestFailureException("substr or container is null");
             }
+#if PLATFORM_PCL
+            if (container.IndexOf(substr, StringComparison.Ordinal) != -1)
+#else
             if (container.IndexOf(substr, StringComparison.InvariantCulture) != -1)
+#endif
             {
                 throw new PrototestFailureException("substr was found in container");
             }
