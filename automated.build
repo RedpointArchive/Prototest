@@ -14,7 +14,9 @@ generate
 build
 if host Windows
   execute Prototest.Example
+  execute Prototest.Example -c Functional
   native-execute cmd.exe /C "Prototest.Example\bin\Unity\AnyCPU\Debug\Prototest.Example.exe"
+  native-execute cmd.exe /C "Prototest.Example\bin\Unity\AnyCPU\Debug\Prototest.Example.exe -c Functional"
 endif
 
 set package-format nuget/zip

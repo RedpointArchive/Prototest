@@ -20,7 +20,10 @@ namespace Prototest.Library
             string[] args)
         {
             // Sets the default in this version.
-            var version = "12";
+            var version = "14";
+#if PLATFORM_UNITY
+            version = "12";
+#endif
 
 #if !PLATFORM_UNITY
             var options = new OptionSet

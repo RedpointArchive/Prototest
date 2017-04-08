@@ -11,11 +11,11 @@
       <Platforms>Android,Ouya</Platforms>
     </AndroidResource>
     <Compile Include="IVersionedTestRunner.cs" />
+    <Compile Include="Options.cs" />
     <Compile Include="PrototestFailureException.cs" />
     <Compile Include="Resources\Resource.Designer.cs">
       <Platforms>Android,Ouya</Platforms>
     </Compile>
-    <Compile Include="Options.cs" />
     <Compile Include="Runner.cs" />
     <Compile Include="Version1\Assert.cs" />
     <Compile Include="Version1\IAssert.cs" />
@@ -48,5 +48,15 @@
     <Compile Include="Version13\IThreadControl.cs" />
     <Compile Include="Version13\TestAttachment.cs" />
     <Compile Include="Version13\ThreadControl.cs" />
+    <Compile Include="Version14\CategorizedTestSetProvider.cs" />
+    <Compile Include="Version14\DefaultTestRunner.cs" />
+    <Compile Include="Version14\DefaultTestSetProvider.cs" />
+    <Compile Include="Version14\ICategorize.cs" />
+    <Compile Include="Version14\ITestSetProvider.cs" />
+    <Compile Include="Version14\ITestSummaryConsumer.cs" />
+    <Compile Include="Version14\TestResult.cs" />
+    <Compile Include="Version14\TestSet.cs" />
+    <Compile Include="Version14\TestSetEntry.cs" />
+    <Compile Include="Version14\Version14TestRunner.cs" />
   </Files>
 </Project>

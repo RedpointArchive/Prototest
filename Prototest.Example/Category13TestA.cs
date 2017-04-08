@@ -10,7 +10,7 @@ namespace Prototest.Example
         {
             _assert = assert;
 
-            categorize.Method<Category13TestA>("Functional", x=> x.TestMethodA());
+            categorize.Method<Category13TestA>("Functional", x => x.TestMethodA());
             categorize.Method<Category13TestA>("Functional", x => x.TestMethodB());
         }
 
