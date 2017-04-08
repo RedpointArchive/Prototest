@@ -6,6 +6,7 @@
     <Reference Include="Prototest" />
   </References>
   <Files>
+    <Compile Include="AssertionTests.cs" />
     <Compile Include="AsyncTestA.cs" />
     <Compile Include="AttachmentTestA.cs" />
     <Compile Include="BasicAttachmentTestSummaryConsumer.cs" />
