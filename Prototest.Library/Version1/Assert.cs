@@ -2,6 +2,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
+#if !PLATFORM_UNITY
+using System.Threading.Tasks;
+#endif
+#if PLATFORM_PCL
+using System.Reflection;
+#endif
 
 namespace Prototest.Library.Version1
 {
@@ -11,7 +18,7 @@ namespace Prototest.Library.Version1
         {
             if (!expression)
             {
-                throw new PrototestFailureException("Expected true, got false");
+                throw new PrototestTruthFailureException();
             }
         }
 
@@ -19,7 +26,55 @@ namespace Prototest.Library.Version1
         {
             if (!expression)
             {
-                throw new PrototestFailureException("Expected true, got false: " + message);
+                throw new PrototestTruthFailureException(message);
+            }
+        }
+
+        public void True(Expression<Func<bool>> expression)
+        {
+            if (!expression.Compile()())
+            {
+                throw new PrototestTruthFailureException(expression);
+            }
+        }
+
+        public void True(Expression<Func<bool>> expression, string message)
+        {
+            if (!expression.Compile()())
+            {
+                throw new PrototestTruthFailureException(expression, message);
+            }
+        }
+
+        public void False(bool expression)
+        {
+            if (expression)
+            {
+                throw new PrototestFalsityFailureException();
+            }
+        }
+
+        public void False(bool expression, string message)
+        {
+            if (expression)
+            {
+                throw new PrototestFalsityFailureException(message);
+            }
+        }
+
+        public void False(Expression<Func<bool>> expression)
+        {
+            if (expression.Compile()())
+            {
+                throw new PrototestFalsityFailureException(expression);
+            }
+        }
+
+        public void False(Expression<Func<bool>> expression, string message)
+        {
+            if (expression.Compile()())
+            {
+                throw new PrototestFalsityFailureException(expression, message);
             }
         }
 
@@ -27,7 +82,19 @@ namespace Prototest.Library.Version1
         {
             if (!(obj is T))
             {
-                throw new PrototestFailureException("object is not of type " + typeof(T).FullName);
+                throw new PrototestIsTypeFailureException(typeof(T), obj);
+            }
+        }
+
+        public void IsType(Type type, object obj)
+        {
+#if PLATFORM_PCL
+            if (obj == null || type == null || !type.GetTypeInfo().IsAssignableFrom(obj.GetType().GetTypeInfo()))
+#else
+            if (type == null || !type.IsInstanceOfType(obj))
+#endif
+            {
+                throw new PrototestIsTypeFailureException(type, obj);
             }
         }
 
@@ -35,13 +102,16 @@ namespace Prototest.Library.Version1
         {
             if (object.ReferenceEquals(a, b))
             {
-                throw new PrototestFailureException("A and B are the same object");
+                throw new PrototestReferenceInequalityFailureException(a, b);
             }
         }
 
         public void Equal<T>(T[] a, T[] b) where T : IEquatable<T>
         {
-            True((a == null && b == null) || (a != null && b != null));
+            if (!((a == null && b == null) || (a != null && b != null)))
+            {
+                throw new PrototestEqualityFailureException(a, b);
+            }
             if (a == null || b == null)
             {
                 return;
@@ -59,19 +129,19 @@ namespace Prototest.Library.Version1
             {
                 if (b != null)
                 {
-                    throw new PrototestFailureException("A has value while B is null");
+                    throw new PrototestEqualityFailureException(a, b);
                 }
             }
             else
             {
                 if (b == null)
                 {
-                    throw new PrototestFailureException("A is null while B has value");
+                    throw new PrototestEqualityFailureException(a, b);
                 }
 
                 if (!a.Equals(b))
                 {
-                    throw new PrototestFailureException("A is not equal to B");
+                    throw new PrototestEqualityFailureException(a, b);
                 }
             }
         }
@@ -90,61 +160,38 @@ namespace Prototest.Library.Version1
             }
         }
 
-        public void False(bool expression)
-        {
-            if (expression)
-            {
-                throw new PrototestFailureException("Expected false, got true");
-            }
-        }
-
-        public void False(bool expression, string message)
-        {
-            if (expression)
-            {
-                throw new PrototestFailureException("Expected false, got true: " + message);
-            }
-        }
-
         public void All<T>(IEnumerable<T> collection, Func<T, bool> action)
         {
-            if (!collection.All(action))
+            var enumeratedCollection = collection.ToList();
+            if (!enumeratedCollection.All(action))
             {
-                throw new PrototestFailureException("all elements in collection do not meet filter");
+                throw new PrototestAllFilterFailureException<T>(enumeratedCollection);
+            }
+        }
+
+        public void All<T>(IEnumerable<T> collection, Expression<Func<T, bool>> filter)
+        {
+            var action = filter.Compile();
+            var enumeratedCollection = collection.ToList();
+            if (!enumeratedCollection.All(action))
+            {
+                throw new PrototestAllFilterFailureException<T>(enumeratedCollection, filter);
             }
         }
 
         public void Contains<T>(T expected, IEnumerable<T> collection)
         {
-            foreach (var t in collection)
+            var enumeratedCollection = collection.ToList();
+            if (!enumeratedCollection.Contains(expected))
             {
-                if (t == null)
-                {
-                    if (expected != null)
-                    {
-                        throw new PrototestFailureException("A has value while B is null");
-                    }
-                }
-                else
-                {
-                    if (expected == null)
-                    {
-                        throw new PrototestFailureException("A is null while B has value");
-                    }
-
-                    if (t.Equals(expected))
-                    {
-                        return;
-                    }
-                }
+                throw new PrototestContainsFailureException<T>(enumeratedCollection, expected);
             }
-
-            throw new PrototestFailureException("expected value not found in collection");
         }
 
         public void Contains<T>(IEnumerable<T> collection, Predicate<T> condition)
         {
-            foreach (var t in collection)
+            var enumeratedCollection = collection.ToList();
+            foreach (var t in enumeratedCollection)
             {
                 if (condition(t))
                 {
@@ -152,14 +199,14 @@ namespace Prototest.Library.Version1
                 }
             }
 
-            throw new PrototestFailureException("expected value not found in collection");
+            throw new PrototestContainsFailureException<T>(enumeratedCollection, condition);
         }
 
         public void Contains(string substr, string container)
         {
             if (substr == null || container == null)
             {
-                throw new PrototestFailureException("substr or container is null");
+                throw new PrototestStringContainsFailureException(substr, container);
             }
 #if PLATFORM_PCL
             if (container.IndexOf(substr, StringComparison.Ordinal) == -1)
@@ -167,34 +214,23 @@ namespace Prototest.Library.Version1
             if (container.IndexOf(substr, StringComparison.InvariantCulture) == -1)
 #endif
             {
-                throw new PrototestFailureException("substr was not found in container");
+                throw new PrototestStringContainsFailureException(substr, container);
             }
         }
 
         public void DoesNotContain<T>(T value, IEnumerable<T> collection)
         {
-            foreach (var t in collection)
+            var enumeratedCollection = collection.ToList();
+            if (enumeratedCollection.Contains(value))
             {
-                if (t == null)
-                {
-                    if (value == null)
-                    {
-                        throw new PrototestFailureException("A is null and B is null");
-                    }
-                }
-                else
-                {
-                    if (t.Equals(value))
-                    {
-                        throw new PrototestFailureException("A is equal to B");
-                    }
-                }
+                throw new PrototestDoesNotContainFailureException<T>(enumeratedCollection, value);
             }
         }
 
         public void DoesNotContain<T>(IEnumerable<T> collection, Predicate<T> condition)
         {
-            foreach (var t in collection)
+            var enumeratedCollection = collection.ToList();
+            foreach (var t in enumeratedCollection)
             {
                 if (condition(t))
                 {
@@ -202,14 +238,14 @@ namespace Prototest.Library.Version1
                 }
             }
 
-            throw new PrototestFailureException("expected value not found in collection");
+            throw new PrototestDoesNotContainFailureException<T>(enumeratedCollection, condition);
         }
 
         public void DoesNotContain(string substr, string container)
         {
             if (substr == null || container == null)
             {
-                throw new PrototestFailureException("substr or container is null");
+                throw new PrototestStringDoesNotContainFailureException(substr, container);
             }
 #if PLATFORM_PCL
             if (container.IndexOf(substr, StringComparison.Ordinal) != -1)
@@ -217,23 +253,25 @@ namespace Prototest.Library.Version1
             if (container.IndexOf(substr, StringComparison.InvariantCulture) != -1)
 #endif
             {
-                throw new PrototestFailureException("substr was found in container");
+                throw new PrototestStringDoesNotContainFailureException(substr, container);
             }
         }
 
         public void Empty(IEnumerable collection)
         {
-            if (collection.Cast<object>().Any())
+            var enumeratedCollection = collection.Cast<object>().ToList();
+            if (enumeratedCollection.Any())
             {
-                throw new PrototestFailureException("The collection is not empty");
+                throw new PrototestEmptyFailureException(enumeratedCollection);
             }
         }
 
         public void NotEmpty(IEnumerable collection)
         {
-            if (!collection.Cast<object>().Any())
+            var enumeratedCollection = collection.Cast<object>().ToList();
+            if (!enumeratedCollection.Any())
             {
-                throw new PrototestFailureException("The collection is empty");
+                throw new PrototestNotEmptyFailureException(enumeratedCollection);
             }
         }
 
@@ -243,19 +281,19 @@ namespace Prototest.Library.Version1
             {
                 if (b != null)
                 {
-                    throw new PrototestFailureException("A has value while B is null");
+                    throw new PrototestEqualityFailureException(a, b);
                 }
             }
             else
             {
                 if (b == null)
                 {
-                    throw new PrototestFailureException("A is null while B has value");
+                    throw new PrototestEqualityFailureException(a, b);
                 }
 
                 if (!a.Equals(b))
                 {
-                    throw new PrototestFailureException("A is not equal to B");
+                    throw new PrototestEqualityFailureException(a, b);
                 }
             }
         }
@@ -266,7 +304,7 @@ namespace Prototest.Library.Version1
             {
                 if (b == null)
                 {
-                    throw new PrototestFailureException("A and B are both null");
+                    throw new PrototestInequalityFailureException(a, b);
                 }
             }
             else
@@ -278,7 +316,7 @@ namespace Prototest.Library.Version1
 
                 if (a.Equals(b))
                 {
-                    throw new PrototestFailureException("A equals B");
+                    throw new PrototestInequalityFailureException(a, b);
                 }
             }
         }
@@ -291,7 +329,7 @@ namespace Prototest.Library.Version1
             }
             if (a == null && b == null)
             {
-                throw new PrototestFailureException("Both A and B are null");
+                throw new PrototestInequalityFailureException(a, b);
             }
             if (a.Length != b.Length)
             {
@@ -318,14 +356,15 @@ namespace Prototest.Library.Version1
                     }
                 }
             }
-            throw new PrototestFailureException("Both A and B are equal arrays");
+
+            throw new PrototestInequalityFailureException(a, b);
         }
 
         public void Same(object a, object b)
         {
             if (!object.ReferenceEquals(a, b))
             {
-                throw new PrototestFailureException("A and B are not the same object");
+                throw new PrototestReferenceEqualityFailureException(a, b);
             }
         }
 
@@ -333,7 +372,15 @@ namespace Prototest.Library.Version1
         {
             if (a != null)
             {
-                throw new PrototestFailureException("A is not null");
+                throw new PrototestNullFailureException(a);
+            }
+        }
+
+        public void Null(object a, string message)
+        {
+            if (a != null)
+            {
+                throw new PrototestNullFailureException(a, message);
             }
         }
 
@@ -341,8 +388,404 @@ namespace Prototest.Library.Version1
         {
             if (a == null)
             {
-                throw new PrototestFailureException("A is null");
+                throw new PrototestNotNullFailureException();
             }
         }
+
+        public void NotNull(object a, string message)
+        {
+            if (a == null)
+            {
+                throw new PrototestNotNullFailureException(message);
+            }
+        }
+
+        public void Throws(Action code)
+        {
+            try
+            {
+                code();
+                throw new PrototestThrowsFailureException();
+            }
+            catch
+            {
+                // Expected
+            }
+        }
+
+        public void Throws(Action code, string message)
+        {
+            try
+            {
+                code();
+                throw new PrototestThrowsFailureException(message);
+            }
+            catch
+            {
+                // Expected
+            }
+        }
+
+        public void Throws<T>(Action code, string message) where T : Exception
+        {
+            try
+            {
+                code();
+                throw new PrototestThrowsFailureException(typeof(T), message);
+            }
+            catch (T)
+            {
+                // Expected
+            }
+            catch (Exception ex)
+            {
+                throw new PrototestThrowsFailureException(typeof(T), ex, message);
+            }
+        }
+
+        public void Throws<T>(Action code) where T : Exception
+        {
+            try
+            {
+                code();
+                throw new PrototestThrowsFailureException(typeof(T));
+            }
+            catch (T)
+            {
+                // Expected
+            }
+            catch (Exception ex)
+            {
+                throw new PrototestThrowsFailureException(typeof(T), ex);
+            }
+        }
+
+        public void DoesNotThrow(Action code)
+        {
+            try
+            {
+                code();
+            }
+            catch (Exception ex)
+            {
+                throw new PrototestDoesNotThrowFailureException(ex);
+            }
+        }
+
+        public void DoesNotThrow(Action code, string message)
+        {
+            try
+            {
+                code();
+            }
+            catch (Exception ex)
+            {
+                throw new PrototestDoesNotThrowFailureException(ex, message);
+            }
+        }
+
+        public void DoesNotThrow<T>(Action code) where T : Exception
+        {
+            try
+            {
+                code();
+            }
+            catch (T ex)
+            {
+                throw new PrototestDoesNotThrowFailureException(typeof(T), ex);
+            }
+            catch
+            {
+                // Ignored
+            }
+        }
+
+        public void DoesNotThrow<T>(Action code, string message) where T : Exception
+        {
+            try
+            {
+                code();
+            }
+            catch (T ex)
+            {
+                throw new PrototestDoesNotThrowFailureException(typeof(T), ex, message);
+            }
+            catch
+            {
+                // Ignored
+            }
+        }
+
+#if !PLATFORM_UNITY
+        public void Throws(Func<Task> code)
+        {
+            var task = Task.Run(code);
+            try
+            {
+                task.Wait();
+            }
+            catch (Exception ex)
+            {
+                var aggregateException = ex as AggregateException;
+                if (aggregateException != null)
+                {
+                    if (aggregateException.InnerExceptions.Count > 0)
+                    {
+                        // Expected
+                        return;
+                    }
+
+                    throw new PrototestThrowsFailureException();
+                }
+            }
+
+            throw new PrototestThrowsFailureException();
+        }
+
+        public void Throws(Func<Task> code, string message)
+        {
+            var task = Task.Run(code);
+            try
+            {
+                task.Wait();
+            }
+            catch (Exception ex)
+            {
+                var aggregateException = ex as AggregateException;
+                if (aggregateException != null)
+                {
+                    if (aggregateException.InnerExceptions.Count > 0)
+                    {
+                        // Expected
+                        return;
+                    }
+
+                    throw new PrototestThrowsFailureException(message);
+                }
+            }
+
+            throw new PrototestThrowsFailureException(message);
+        }
+
+        public void Throws<T>(Func<Task> code) where T : Exception
+        {
+            var task = Task.Run(code);
+            try
+            {
+                task.Wait();
+            }
+            catch (Exception ex)
+            {
+                var aggregateException = ex as AggregateException;
+                if (aggregateException != null)
+                {
+                    if (aggregateException.InnerExceptions.OfType<T>().Any())
+                    {
+                        // Expected
+                        return;
+                    }
+
+                    throw new PrototestThrowsFailureException(typeof(T), aggregateException.InnerExceptions.First());
+                }
+
+                if (ex is T)
+                {
+                    // Expected
+                    return;
+                }
+
+                throw new PrototestThrowsFailureException(typeof(T), ex);
+            }
+            
+            throw new PrototestThrowsFailureException(typeof(T));
+        }
+
+        public void Throws<T>(Func<Task> code, string message) where T : Exception
+        {
+            var task = Task.Run(code);
+            try
+            {
+                task.Wait();
+            }
+            catch (Exception ex)
+            {
+                var aggregateException = ex as AggregateException;
+                if (aggregateException != null)
+                {
+                    if (aggregateException.InnerExceptions.OfType<T>().Any())
+                    {
+                        // Expected
+                        return;
+                    }
+
+                    throw new PrototestThrowsFailureException(typeof(T), aggregateException.InnerExceptions.First(), message);
+                }
+
+                if (ex is T)
+                {
+                    // Expected
+                    return;
+                }
+
+                throw new PrototestThrowsFailureException(typeof(T), ex, message);
+            }
+
+            throw new PrototestThrowsFailureException(typeof(T), message);
+        }
+
+        public void DoesNotThrow(Func<Task> code)
+        {
+            var task = Task.Run(code);
+            try
+            {
+                task.Wait();
+
+                if (!task.IsFaulted || task.Exception == null)
+                {
+                    // Expected
+                    return;
+                }
+
+                if (task.Exception.InnerExceptions.Count == 1)
+                {
+                    throw new PrototestDoesNotThrowFailureException(task.Exception.InnerExceptions.First());
+                }
+
+                throw new PrototestDoesNotThrowFailureException(task.Exception);
+            }
+            catch (AggregateException ex)
+            {
+                if (ex.InnerExceptions.Count == 1)
+                {
+                    throw new PrototestDoesNotThrowFailureException(ex.InnerExceptions.First());
+                }
+
+                throw new PrototestDoesNotThrowFailureException(ex);
+            }
+            catch (Exception ex)
+            {
+                throw new PrototestDoesNotThrowFailureException(ex);
+            }
+        }
+
+        public void DoesNotThrow(Func<Task> code, string message)
+        {
+            var task = Task.Run(code);
+            try
+            {
+                task.Wait();
+
+                if (!task.IsFaulted || task.Exception == null)
+                {
+                    // Expected
+                    return;
+                }
+
+                if (task.Exception.InnerExceptions.Count == 1)
+                {
+                    throw new PrototestDoesNotThrowFailureException(task.Exception.InnerExceptions.First(), message);
+                }
+
+                throw new PrototestDoesNotThrowFailureException(task.Exception, message);
+            }
+            catch (AggregateException ex)
+            {
+                if (ex.InnerExceptions.Count == 1)
+                {
+                    throw new PrototestDoesNotThrowFailureException(ex.InnerExceptions.First(), message);
+                }
+
+                throw new PrototestDoesNotThrowFailureException(ex, message);
+            }
+            catch (Exception ex)
+            {
+                throw new PrototestDoesNotThrowFailureException(ex, message);
+            }
+        }
+
+        public void DoesNotThrow<T>(Func<Task> code) where T : Exception
+        {
+            var task = Task.Run(code);
+            try
+            {
+                task.Wait();
+
+                if (!task.IsFaulted || task.Exception == null)
+                {
+                    // Expected
+                    return;
+                }
+
+                if (task.Exception.InnerExceptions.OfType<T>().Any())
+                {
+                    throw new PrototestDoesNotThrowFailureException(typeof(T),
+                        task.Exception.InnerExceptions.OfType<T>().First());
+                }
+
+                // Expected
+            }
+            catch (AggregateException ex)
+            {
+                if (ex.InnerExceptions.OfType<T>().Any())
+                {
+                    throw new PrototestDoesNotThrowFailureException(typeof(T), ex.InnerExceptions.OfType<T>().First());
+                }
+
+                // Expected
+            }
+            catch (T ex)
+            {
+                throw new PrototestDoesNotThrowFailureException(typeof(T), ex);
+            }
+            catch
+            {
+                // Expected
+            }
+
+            // Expected
+        }
+
+        public void DoesNotThrow<T>(Func<Task> code, string message) where T : Exception
+        {
+            var task = Task.Run(code);
+            try
+            {
+                task.Wait();
+
+                if (!task.IsFaulted || task.Exception == null)
+                {
+                    // Expected
+                    return;
+                }
+
+                if (task.Exception.InnerExceptions.OfType<T>().Any())
+                {
+                    throw new PrototestDoesNotThrowFailureException(typeof(T),
+                        task.Exception.InnerExceptions.OfType<T>().First(), message);
+                }
+
+                // Expected
+            }
+            catch (AggregateException ex)
+            {
+                if (ex.InnerExceptions.OfType<T>().Any())
+                {
+                    throw new PrototestDoesNotThrowFailureException(typeof(T), ex.InnerExceptions.OfType<T>().First(), message);
+                }
+
+                // Expected
+            }
+            catch (T ex)
+            {
+                throw new PrototestDoesNotThrowFailureException(typeof(T), ex, message);
+            }
+            catch
+            {
+                // Expected
+            }
+
+            // Expected
+        }
+#endif
     }
 }

@@ -12,7 +12,24 @@
     </AndroidResource>
     <Compile Include="IVersionedTestRunner.cs" />
     <Compile Include="Options.cs" />
+    <Compile Include="PrototestAllFilterFailureException.cs" />
+    <Compile Include="PrototestContainsFailureException.cs" />
+    <Compile Include="PrototestDoesNotContainFailureException.cs" />
+    <Compile Include="PrototestDoesNotThrowFailureException.cs" />
+    <Compile Include="PrototestEmptyFailureException.cs" />
+    <Compile Include="PrototestEqualityFailureException.cs" />
     <Compile Include="PrototestFailureException.cs" />
+    <Compile Include="PrototestFalsityFailureException.cs" />
+    <Compile Include="PrototestInequalityFailureException.cs" />
+    <Compile Include="PrototestIsTypeFailureException.cs" />
+    <Compile Include="PrototestNotEmptyFailureException.cs" />
+    <Compile Include="PrototestNotNullFailureException.cs" />
+    <Compile Include="PrototestNullFailureException.cs" />
+    <Compile Include="PrototestReferenceEqualityFailureException.cs" />
+    <Compile Include="PrototestReferenceInequalityFailureException.cs" />
+    <Compile Include="PrototestThrowsFailureException.cs" />
+    <Compile Include="PrototestTruthFailureException.cs" />
+    <Compile Include="PrototestValueFormatter.cs" />
     <Compile Include="Resources\Resource.Designer.cs">
       <Platforms>Android,Ouya</Platforms>
     </Compile>
