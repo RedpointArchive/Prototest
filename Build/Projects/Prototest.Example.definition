@@ -6,11 +6,15 @@
     <Reference Include="Prototest" />
   </References>
   <Files>
+    <Compile Include="AsyncTestA.cs" />
     <Compile Include="AttachmentTestA.cs" />
     <Compile Include="BasicAttachmentTestSummaryConsumer.cs" />
     <Compile Include="Category13TestA.cs" />
+    <Compile Include="CategoryAsyncTestA.cs" />
+    <Compile Include="CategoryMixedTestA.cs" />
     <Compile Include="CategoryTestA.cs" />
     <Compile Include="ExampleTestA.cs" />
+    <Compile Include="MixedTestA.cs" />
     <Compile Include="Resources\Resource.Designer.cs">
       <Platforms>Android,Ouya</Platforms>
     </Compile>
