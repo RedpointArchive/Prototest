@@ -264,7 +264,7 @@ namespace Prototest.Library.Version14
                             }
                         })).ToArray();
 
-#if !PLATFORM_UNITY && !PLATFORM_PCL
+#if !PLATFORM_UNITY
                 if (Debugger.IsAttached || set.RunSingleThreadedOnMainThread)
                 {
                     // Run in single thread when a debugger is attached to make
@@ -274,11 +274,15 @@ namespace Prototest.Library.Version14
                     {
                         task();
                     }
-#if !PLATFORM_UNITY && !PLATFORM_PCL
+#if !PLATFORM_UNITY
                 }
                 else
                 {
+#if PLATFORM_PCL
+                    Task.WaitAll(tasks.Select(Task.Run).ToArray());
+#else
                     Parallel.Invoke(tasks);
+#endif
                 }
 #endif
             }
