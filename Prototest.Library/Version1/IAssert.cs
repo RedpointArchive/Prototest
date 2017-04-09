@@ -41,19 +41,19 @@ namespace Prototest.Library.Version1
         void IsType<T>(object obj);
         void IsType(Type type, object obj);
         void NotSame(object a, object b);
-        void Throws(Action code);
-        void Throws<T>(Action code) where T : Exception;
-        void Throws(Action code, string message);
-        void Throws<T>(Action code, string message) where T : Exception;
+        Exception Throws(Action code);
+        T Throws<T>(Action code) where T : Exception;
+        Exception Throws(Action code, string message);
+        T Throws<T>(Action code, string message) where T : Exception;
         void DoesNotThrow(Action code);
         void DoesNotThrow<T>(Action code) where T : Exception;
         void DoesNotThrow(Action code, string message);
         void DoesNotThrow<T>(Action code, string message) where T : Exception;
 #if !PLATFORM_UNITY
-        void Throws(Func<Task> code);
-        void Throws<T>(Func<Task> code) where T : Exception;
-        void Throws(Func<Task> code, string message);
-        void Throws<T>(Func<Task> code, string message) where T : Exception;
+        Exception Throws(Func<Task> code);
+        T Throws<T>(Func<Task> code) where T : Exception;
+        Exception Throws(Func<Task> code, string message);
+        T Throws<T>(Func<Task> code, string message) where T : Exception;
         void DoesNotThrow(Func<Task> code);
         void DoesNotThrow<T>(Func<Task> code) where T : Exception;
         void DoesNotThrow(Func<Task> code, string message);

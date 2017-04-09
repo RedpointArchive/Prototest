@@ -400,42 +400,45 @@ namespace Prototest.Library.Version1
             }
         }
 
-        public void Throws(Action code)
+        public Exception Throws(Action code)
         {
             try
             {
                 code();
                 throw new PrototestThrowsFailureException();
             }
-            catch
+            catch (Exception ex)
             {
                 // Expected
+                return ex;
             }
         }
 
-        public void Throws(Action code, string message)
+        public Exception Throws(Action code, string message)
         {
             try
             {
                 code();
                 throw new PrototestThrowsFailureException(message);
             }
-            catch
+            catch (Exception ex)
             {
                 // Expected
+                return ex;
             }
         }
 
-        public void Throws<T>(Action code, string message) where T : Exception
+        public T Throws<T>(Action code, string message) where T : Exception
         {
             try
             {
                 code();
                 throw new PrototestThrowsFailureException(typeof(T), message);
             }
-            catch (T)
+            catch (T ex)
             {
                 // Expected
+                return ex;
             }
             catch (Exception ex)
             {
@@ -443,16 +446,17 @@ namespace Prototest.Library.Version1
             }
         }
 
-        public void Throws<T>(Action code) where T : Exception
+        public T Throws<T>(Action code) where T : Exception
         {
             try
             {
                 code();
                 throw new PrototestThrowsFailureException(typeof(T));
             }
-            catch (T)
+            catch (T ex)
             {
                 // Expected
+                return ex;
             }
             catch (Exception ex)
             {
@@ -517,7 +521,7 @@ namespace Prototest.Library.Version1
         }
 
 #if !PLATFORM_UNITY
-        public void Throws(Func<Task> code)
+        public Exception Throws(Func<Task> code)
         {
             var task = Task.Run(code);
             try
@@ -532,7 +536,12 @@ namespace Prototest.Library.Version1
                     if (aggregateException.InnerExceptions.Count > 0)
                     {
                         // Expected
-                        return;
+                        if (aggregateException.InnerExceptions.Count == 1)
+                        {
+                            return aggregateException.InnerExceptions.First();
+                        }
+
+                        return aggregateException;
                     }
 
                     throw new PrototestThrowsFailureException();
@@ -542,7 +551,7 @@ namespace Prototest.Library.Version1
             throw new PrototestThrowsFailureException();
         }
 
-        public void Throws(Func<Task> code, string message)
+        public Exception Throws(Func<Task> code, string message)
         {
             var task = Task.Run(code);
             try
@@ -557,7 +566,12 @@ namespace Prototest.Library.Version1
                     if (aggregateException.InnerExceptions.Count > 0)
                     {
                         // Expected
-                        return;
+                        if (aggregateException.InnerExceptions.Count == 1)
+                        {
+                            return aggregateException.InnerExceptions.First();
+                        }
+
+                        return aggregateException;
                     }
 
                     throw new PrototestThrowsFailureException(message);
@@ -567,7 +581,7 @@ namespace Prototest.Library.Version1
             throw new PrototestThrowsFailureException(message);
         }
 
-        public void Throws<T>(Func<Task> code) where T : Exception
+        public T Throws<T>(Func<Task> code) where T : Exception
         {
             var task = Task.Run(code);
             try
@@ -582,16 +596,17 @@ namespace Prototest.Library.Version1
                     if (aggregateException.InnerExceptions.OfType<T>().Any())
                     {
                         // Expected
-                        return;
+                        return aggregateException.InnerExceptions.OfType<T>().First();
                     }
 
                     throw new PrototestThrowsFailureException(typeof(T), aggregateException.InnerExceptions.First());
                 }
 
-                if (ex is T)
+                var throws = ex as T;
+                if (throws != null)
                 {
                     // Expected
-                    return;
+                    return throws;
                 }
 
                 throw new PrototestThrowsFailureException(typeof(T), ex);
@@ -600,7 +615,7 @@ namespace Prototest.Library.Version1
             throw new PrototestThrowsFailureException(typeof(T));
         }
 
-        public void Throws<T>(Func<Task> code, string message) where T : Exception
+        public T Throws<T>(Func<Task> code, string message) where T : Exception
         {
             var task = Task.Run(code);
             try
@@ -615,16 +630,17 @@ namespace Prototest.Library.Version1
                     if (aggregateException.InnerExceptions.OfType<T>().Any())
                     {
                         // Expected
-                        return;
+                        return aggregateException.InnerExceptions.OfType<T>().First();
                     }
 
                     throw new PrototestThrowsFailureException(typeof(T), aggregateException.InnerExceptions.First(), message);
                 }
 
-                if (ex is T)
+                var throws = ex as T;
+                if (throws != null)
                 {
                     // Expected
-                    return;
+                    return throws;
                 }
 
                 throw new PrototestThrowsFailureException(typeof(T), ex, message);
