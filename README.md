@@ -48,7 +48,7 @@ You will also need to install the `NDesk.Options` package.
 Install Prototest into your project using [Protobuild](https://protobuild.org/), like so:
 
 ```
-Protobuild.exe --install https://protobuild.org/hach-que/Prototest
+Protobuild.exe --add Prototest
 ```
 
 Then reference Prototest from the test project, like so:
@@ -86,7 +86,7 @@ Projects are built and tested against all supported and experimental platforms.
 
 |     | Status |
 | --- | ----- |
-| Prototest | ![](https://jenkins.redpointgames.com.au/buildStatus/icon?job=RedpointGames/Prototest/master) |
+| Prototest | ![](https://build-oss.redpoint.games/buildStatus/icon?job=RedpointGames/Prototest/master) |
 
 Features
 ------------
