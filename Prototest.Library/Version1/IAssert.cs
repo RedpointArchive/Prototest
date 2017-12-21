@@ -50,14 +50,30 @@ namespace Prototest.Library.Version1
         void DoesNotThrow(Action code, string message);
         void DoesNotThrow<T>(Action code, string message) where T : Exception;
 #if !PLATFORM_UNITY
+        [Obsolete("This method can introduce deadlocks because it is not awaitable; use ThrowsAsync instead.")]
         Exception Throws(Func<Task> code);
+        [Obsolete("This method can introduce deadlocks because it is not awaitable; use ThrowsAsync instead.")]
         T Throws<T>(Func<Task> code) where T : Exception;
+        [Obsolete("This method can introduce deadlocks because it is not awaitable; use ThrowsAsync instead.")]
         Exception Throws(Func<Task> code, string message);
+        [Obsolete("This method can introduce deadlocks because it is not awaitable; use ThrowsAsync instead.")]
         T Throws<T>(Func<Task> code, string message) where T : Exception;
+        [Obsolete("This method can introduce deadlocks because it is not awaitable; use DoesNotThrowAsync instead.")]
         void DoesNotThrow(Func<Task> code);
+        [Obsolete("This method can introduce deadlocks because it is not awaitable; use DoesNotThrowAsync instead.")]
         void DoesNotThrow<T>(Func<Task> code) where T : Exception;
+        [Obsolete("This method can introduce deadlocks because it is not awaitable; use DoesNotThrowAsync instead.")]
         void DoesNotThrow(Func<Task> code, string message);
+        [Obsolete("This method can introduce deadlocks because it is not awaitable; use DoesNotThrowAsync instead.")]
         void DoesNotThrow<T>(Func<Task> code, string message) where T : Exception;
+        Task<Exception> ThrowsAsync(Func<Task> code);
+        Task<T> ThrowsAsync<T>(Func<Task> code) where T : Exception;
+        Task<Exception> ThrowsAsync(Func<Task> code, string message);
+        Task<T> ThrowsAsync<T>(Func<Task> code, string message) where T : Exception;
+        Task DoesNotThrowAsync(Func<Task> code);
+        Task DoesNotThrowAsync<T>(Func<Task> code) where T : Exception;
+        Task DoesNotThrowAsync(Func<Task> code, string message);
+        Task DoesNotThrowAsync<T>(Func<Task> code, string message) where T : Exception;
 #endif
     }
 }

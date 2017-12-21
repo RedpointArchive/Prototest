@@ -81,33 +81,33 @@ namespace Prototest.Example
         }
 
 #if !PLATFORM_UNITY
-        public void TestAsyncThrowsFailure()
+        public async Task TestAsyncThrowsFailure()
         {
-            _assert.Throws<PrototestThrowsFailureException>(() =>
+            await _assert.ThrowsAsync<PrototestThrowsFailureException>(async () =>
             {
-                _assert.Throws<InvalidOperationException>(async () =>
+                await _assert.ThrowsAsync<InvalidOperationException>(async () =>
                 {
                     await Task.Delay(100);
                 });
             });
         }
 
-        public void TestAsyncThrowsAnyFailure()
+        public async Task TestAsyncThrowsAnyFailure()
         {
-            _assert.Throws<PrototestThrowsFailureException>(() =>
+            await _assert.ThrowsAsync<PrototestThrowsFailureException>(async () =>
             {
-                _assert.Throws(async () =>
+                await _assert.ThrowsAsync(async () =>
                 {
                     await Task.Delay(100);
                 });
             });
         }
 
-        public void TestAsyncDoesNotThrowFailure()
+        public async Task TestAsyncDoesNotThrowFailure()
         {
-            _assert.Throws<PrototestDoesNotThrowFailureException>(() =>
+            await _assert.ThrowsAsync<PrototestDoesNotThrowFailureException>(async () =>
             {
-                _assert.DoesNotThrow<InvalidOperationException>(async () =>
+                await _assert.DoesNotThrowAsync<InvalidOperationException>(async () =>
                 {
                     await Task.Delay(100);
                     throw new InvalidOperationException();
@@ -115,11 +115,11 @@ namespace Prototest.Example
             });
         }
 
-        public void TestAsyncDoesNotThrowAnyFailure()
+        public async Task TestAsyncDoesNotThrowAnyFailure()
         {
-            _assert.Throws<PrototestDoesNotThrowFailureException>(() =>
+            await _assert.ThrowsAsync<PrototestDoesNotThrowFailureException>(async () =>
             {
-                _assert.DoesNotThrow(async () =>
+                await _assert.DoesNotThrowAsync(async () =>
                 {
                     await Task.Delay(100);
                     throw new InvalidOperationException();
