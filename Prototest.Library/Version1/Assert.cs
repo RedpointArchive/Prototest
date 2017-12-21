@@ -521,6 +521,7 @@ namespace Prototest.Library.Version1
         }
 
 #if !PLATFORM_UNITY
+        [Obsolete("This method can introduce deadlocks because it is not awaitable; use ThrowsAsync instead.")]
         public Exception Throws(Func<Task> code)
         {
             var task = Task.Run(code);
@@ -551,6 +552,7 @@ namespace Prototest.Library.Version1
             throw new PrototestThrowsFailureException();
         }
 
+        [Obsolete("This method can introduce deadlocks because it is not awaitable; use ThrowsAsync instead.")]
         public Exception Throws(Func<Task> code, string message)
         {
             var task = Task.Run(code);
@@ -581,6 +583,7 @@ namespace Prototest.Library.Version1
             throw new PrototestThrowsFailureException(message);
         }
 
+        [Obsolete("This method can introduce deadlocks because it is not awaitable; use ThrowsAsync instead.")]
         public T Throws<T>(Func<Task> code) where T : Exception
         {
             var task = Task.Run(code);
@@ -615,6 +618,7 @@ namespace Prototest.Library.Version1
             throw new PrototestThrowsFailureException(typeof(T));
         }
 
+        [Obsolete("This method can introduce deadlocks because it is not awaitable; use ThrowsAsync instead.")]
         public T Throws<T>(Func<Task> code, string message) where T : Exception
         {
             var task = Task.Run(code);
@@ -649,6 +653,7 @@ namespace Prototest.Library.Version1
             throw new PrototestThrowsFailureException(typeof(T), message);
         }
 
+        [Obsolete("This method can introduce deadlocks because it is not awaitable; use DoesNotThrowAsync instead.")]
         public void DoesNotThrow(Func<Task> code)
         {
             var task = Task.Run(code);
@@ -684,6 +689,7 @@ namespace Prototest.Library.Version1
             }
         }
 
+        [Obsolete("This method can introduce deadlocks because it is not awaitable; use DoesNotThrowAsync instead.")]
         public void DoesNotThrow(Func<Task> code, string message)
         {
             var task = Task.Run(code);
@@ -719,6 +725,7 @@ namespace Prototest.Library.Version1
             }
         }
 
+        [Obsolete("This method can introduce deadlocks because it is not awaitable; use DoesNotThrowAsync instead.")]
         public void DoesNotThrow<T>(Func<Task> code) where T : Exception
         {
             var task = Task.Run(code);
@@ -761,12 +768,291 @@ namespace Prototest.Library.Version1
             // Expected
         }
 
+        [Obsolete("This method can introduce deadlocks because it is not awaitable; use DoesNotThrowAsync instead.")]
         public void DoesNotThrow<T>(Func<Task> code, string message) where T : Exception
         {
             var task = Task.Run(code);
             try
             {
                 task.Wait();
+
+                if (!task.IsFaulted || task.Exception == null)
+                {
+                    // Expected
+                    return;
+                }
+
+                if (task.Exception.InnerExceptions.OfType<T>().Any())
+                {
+                    throw new PrototestDoesNotThrowFailureException(typeof(T),
+                        task.Exception.InnerExceptions.OfType<T>().First(), message);
+                }
+
+                // Expected
+            }
+            catch (AggregateException ex)
+            {
+                if (ex.InnerExceptions.OfType<T>().Any())
+                {
+                    throw new PrototestDoesNotThrowFailureException(typeof(T), ex.InnerExceptions.OfType<T>().First(), message);
+                }
+
+                // Expected
+            }
+            catch (T ex)
+            {
+                throw new PrototestDoesNotThrowFailureException(typeof(T), ex, message);
+            }
+            catch
+            {
+                // Expected
+            }
+
+            // Expected
+        }
+
+        public async Task<Exception> ThrowsAsync(Func<Task> code)
+        {
+            try
+            {
+                await code();
+            }
+            catch (Exception ex)
+            {
+                var aggregateException = ex as AggregateException;
+                if (aggregateException != null)
+                {
+                    if (aggregateException.InnerExceptions.Count > 0)
+                    {
+                        // Expected
+                        if (aggregateException.InnerExceptions.Count == 1)
+                        {
+                            return aggregateException.InnerExceptions.First();
+                        }
+
+                        return aggregateException;
+                    }
+
+                    throw new PrototestThrowsFailureException();
+                }
+            }
+
+            throw new PrototestThrowsFailureException();
+        }
+
+        public async Task<Exception> ThrowsAsync(Func<Task> code, string message)
+        {
+            try
+            {
+                await code();
+            }
+            catch (Exception ex)
+            {
+                var aggregateException = ex as AggregateException;
+                if (aggregateException != null)
+                {
+                    if (aggregateException.InnerExceptions.Count > 0)
+                    {
+                        // Expected
+                        if (aggregateException.InnerExceptions.Count == 1)
+                        {
+                            return aggregateException.InnerExceptions.First();
+                        }
+
+                        return aggregateException;
+                    }
+
+                    throw new PrototestThrowsFailureException(message);
+                }
+            }
+
+            throw new PrototestThrowsFailureException(message);
+        }
+
+        public async Task<T> ThrowsAsync<T>(Func<Task> code) where T : Exception
+        {
+            try
+            {
+                await code();
+            }
+            catch (Exception ex)
+            {
+                var aggregateException = ex as AggregateException;
+                if (aggregateException != null)
+                {
+                    if (aggregateException.InnerExceptions.OfType<T>().Any())
+                    {
+                        // Expected
+                        return aggregateException.InnerExceptions.OfType<T>().First();
+                    }
+
+                    throw new PrototestThrowsFailureException(typeof(T), aggregateException.InnerExceptions.First());
+                }
+
+                var throws = ex as T;
+                if (throws != null)
+                {
+                    // Expected
+                    return throws;
+                }
+
+                throw new PrototestThrowsFailureException(typeof(T), ex);
+            }
+
+            throw new PrototestThrowsFailureException(typeof(T));
+        }
+
+        public async Task<T> ThrowsAsync<T>(Func<Task> code, string message) where T : Exception
+        {
+            try
+            {
+                await code();
+            }
+            catch (Exception ex)
+            {
+                var aggregateException = ex as AggregateException;
+                if (aggregateException != null)
+                {
+                    if (aggregateException.InnerExceptions.OfType<T>().Any())
+                    {
+                        // Expected
+                        return aggregateException.InnerExceptions.OfType<T>().First();
+                    }
+
+                    throw new PrototestThrowsFailureException(typeof(T), aggregateException.InnerExceptions.First(), message);
+                }
+
+                var throws = ex as T;
+                if (throws != null)
+                {
+                    // Expected
+                    return throws;
+                }
+
+                throw new PrototestThrowsFailureException(typeof(T), ex, message);
+            }
+
+            throw new PrototestThrowsFailureException(typeof(T), message);
+        }
+
+        public async Task DoesNotThrowAsync(Func<Task> code)
+        {
+            try
+            {
+                var task = Task.Run(code);
+                await task;
+
+                if (!task.IsFaulted || task.Exception == null)
+                {
+                    // Expected
+                    return;
+                }
+
+                if (task.Exception.InnerExceptions.Count == 1)
+                {
+                    throw new PrototestDoesNotThrowFailureException(task.Exception.InnerExceptions.First());
+                }
+
+                throw new PrototestDoesNotThrowFailureException(task.Exception);
+            }
+            catch (AggregateException ex)
+            {
+                if (ex.InnerExceptions.Count == 1)
+                {
+                    throw new PrototestDoesNotThrowFailureException(ex.InnerExceptions.First());
+                }
+
+                throw new PrototestDoesNotThrowFailureException(ex);
+            }
+            catch (Exception ex)
+            {
+                throw new PrototestDoesNotThrowFailureException(ex);
+            }
+        }
+
+        public async Task DoesNotThrowAsync(Func<Task> code, string message)
+        {
+            try
+            {
+                var task = Task.Run(code);
+                await task;
+
+                if (!task.IsFaulted || task.Exception == null)
+                {
+                    // Expected
+                    return;
+                }
+
+                if (task.Exception.InnerExceptions.Count == 1)
+                {
+                    throw new PrototestDoesNotThrowFailureException(task.Exception.InnerExceptions.First(), message);
+                }
+
+                throw new PrototestDoesNotThrowFailureException(task.Exception, message);
+            }
+            catch (AggregateException ex)
+            {
+                if (ex.InnerExceptions.Count == 1)
+                {
+                    throw new PrototestDoesNotThrowFailureException(ex.InnerExceptions.First(), message);
+                }
+
+                throw new PrototestDoesNotThrowFailureException(ex, message);
+            }
+            catch (Exception ex)
+            {
+                throw new PrototestDoesNotThrowFailureException(ex, message);
+            }
+        }
+
+        public async Task DoesNotThrowAsync<T>(Func<Task> code) where T : Exception
+        {
+            try
+            {
+                var task = Task.Run(code);
+                await task;
+
+                if (!task.IsFaulted || task.Exception == null)
+                {
+                    // Expected
+                    return;
+                }
+
+                if (task.Exception.InnerExceptions.OfType<T>().Any())
+                {
+                    throw new PrototestDoesNotThrowFailureException(typeof(T),
+                        task.Exception.InnerExceptions.OfType<T>().First());
+                }
+
+                // Expected
+            }
+            catch (AggregateException ex)
+            {
+                if (ex.InnerExceptions.OfType<T>().Any())
+                {
+                    throw new PrototestDoesNotThrowFailureException(typeof(T), ex.InnerExceptions.OfType<T>().First());
+                }
+
+                // Expected
+            }
+            catch (T ex)
+            {
+                throw new PrototestDoesNotThrowFailureException(typeof(T), ex);
+            }
+            catch
+            {
+                // Expected
+            }
+
+            // Expected
+        }
+
+        public async Task DoesNotThrowAsync<T>(Func<Task> code, string message) where T : Exception
+        {
+            try
+            {
+                var task = Task.Run(code);
+                await task;
 
                 if (!task.IsFaulted || task.Exception == null)
                 {
