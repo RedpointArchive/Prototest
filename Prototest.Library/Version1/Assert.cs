@@ -835,6 +835,10 @@ namespace Prototest.Library.Version1
 
                     throw new PrototestThrowsFailureException();
                 }
+                else
+                {
+                    return ex;
+                }
             }
 
             throw new PrototestThrowsFailureException();
@@ -863,6 +867,10 @@ namespace Prototest.Library.Version1
                     }
 
                     throw new PrototestThrowsFailureException(message);
+                }
+                else
+                {
+                    return ex;
                 }
             }
 

@@ -27,6 +27,55 @@ namespace Prototest.Example
             await Task.Yield();
             await Task.Yield();
         }
+
+        public async Task TestThrowsAsync1()
+        {
+            await _assert.ThrowsAsync(async () =>
+            {
+                throw new System.NotSupportedException();
+            });
+        }
+
+        public async Task TestThrowsAsync2()
+        {
+            await _assert.ThrowsAsync<System.NotSupportedException>(async () =>
+            {
+                throw new System.NotSupportedException();
+            });
+        }
+
+        public async Task TestThrowsAsync3()
+        {
+            await _assert.ThrowsAsync(() =>
+            {
+                throw new System.NotSupportedException();
+            });
+        }
+
+        public async Task TestThrowsAsync4()
+        {
+            await _assert.ThrowsAsync<System.NotSupportedException>(() =>
+            {
+                throw new System.NotSupportedException();
+            });
+        }
+
+        public async Task TestThrowsAsync6()
+        {
+            await _assert.DoesNotThrowAsync(async () =>
+            {
+                // Do nothing.
+                var a = 1;
+            });
+        }
+
+        public async Task TestThrowsAsync7()
+        {
+            await _assert.DoesNotThrowAsync<System.NotSupportedException>(async () =>
+            {
+                throw new System.NotImplementedException();
+            });
+        }
     }
 }
 
