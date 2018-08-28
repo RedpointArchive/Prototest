@@ -44,6 +44,15 @@ Supported Platforms
 
 Prototest runs on test assemblies using .NET Core or .NET Standard 2.0 and higher.
 
+Build Status
+-------------
+
+Prototest is built on AppVeyor.
+
+|     | Status |
+| --- | ----- |
+| Prototest | [![Build status](https://ci.appveyor.com/api/projects/status/lmpg5vywarlwt2c0?svg=true)](https://ci.appveyor.com/project/hach-que/prototest) |
+
 Features
 ------------
 
