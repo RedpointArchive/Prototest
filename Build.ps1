@@ -28,17 +28,17 @@ try
     $PackageVersion="1.6.3"
 
     # Create the NuGet packages.
-    dotnet pack --no-build --no-restore /p:NuspecProperties=version=$PackageVersion /p:NuspecFile=..\Prototest.nuspec .\Prototest.Library\Prototest.Library.csproj
+    dotnet pack -c Release --no-build --no-restore /p:NuspecProperties=version=$PackageVersion /p:NuspecFile=..\Prototest.nuspec .\Prototest.Library\Prototest.Library.csproj
     if ($LASTEXITCODE -ne 0) 
     {
         exit $LASTEXITCODE
     }
-    dotnet pack --no-build --no-restore /p:NuspecProperties=version=$PackageVersion /p:NuspecFile=..\Prototest.Runtime.nuspec .\Prototest.Library\Prototest.Library.csproj
+    dotnet pack -c Release --no-build --no-restore /p:NuspecProperties=version=$PackageVersion /p:NuspecFile=..\Prototest.Runtime.nuspec .\Prototest.Library\Prototest.Library.csproj
     if ($LASTEXITCODE -ne 0) 
     {
         exit $LASTEXITCODE
     }
-    dotnet pack --no-build --no-restore /p:NuspecProperties=version=$PackageVersion /p:NuspecFile=..\Prototest.EntryPoint.nuspec .\Prototest.Library\Prototest.Library.csproj
+    dotnet pack -c Release --no-build --no-restore /p:NuspecProperties=version=$PackageVersion /p:NuspecFile=..\Prototest.EntryPoint.nuspec .\Prototest.Library\Prototest.Library.csproj
     if ($LASTEXITCODE -ne 0) 
     {
         exit $LASTEXITCODE
