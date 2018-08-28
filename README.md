@@ -44,15 +44,6 @@ Supported Platforms
 
 Prototest runs on test assemblies using .NET Core or .NET Standard 2.0 and higher.
 
-Build Status
--------------
-
-Projects are built and tested against all supported and experimental platforms.
-
-|     | Status |
-| --- | ----- |
-| Prototest | ![](https://build-oss.redpoint.games/buildStatus/icon?job=RedpointGames/Prototest/master) |
-
 Features
 ------------
 
