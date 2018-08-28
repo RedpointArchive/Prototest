@@ -25,7 +25,11 @@ try
     }
 
     # The package version to use.
-    $PackageVersion="1.6.3"
+    $PackageVersion=$env:APPVEYOR_BUILD_VERSION
+    if ("$PackageVersion" -eq "") 
+    {
+        $PackageVersion="1.6.3-DEV"
+    }
 
     # Create the NuGet packages.
     dotnet pack -c Release --no-build --no-restore /p:NuspecProperties=version=$PackageVersion /p:NuspecFile=..\Prototest.nuspec .\Prototest.Library\Prototest.Library.csproj
