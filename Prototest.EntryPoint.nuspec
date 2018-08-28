@@ -15,7 +15,10 @@
     </metadata>
     <files>
         <!-- Include build properties. -->
-        <file src="build\Prototest.EntryPoint.targets" target="build/Prototest.EntryPoint.targets" />
+        <file src="build\Prototest.EntryPoint.targets" target="buildMultiTargeting\" />
+        <file src="build\Prototest.EntryPoint.targets" target="build\netcoreapp1.0\" />
+        <file src="build\Prototest.EntryPoint.targets" target="build\net45\" />
+        <file src="build\Prototest.EntryPoint.targets" target="build\uap10.0\" />
 
         <!-- Include Program entry point. -->
         <file src="Prototest.Include\Program.cs" target="contentFiles/any/any/Program.cs" />
