@@ -69,6 +69,34 @@ namespace Prototest.Library.Version15
                 }
             }
 
+            // Search dependencies for test run context.
+            foreach (var dependencyAssemblyName in assembly.GetReferencedAssemblies())
+            {
+                var dependencyAssembly = Assembly.Load(dependencyAssemblyName);
+                foreach (var type in dependencyAssembly.GetTypes())
+                {
+                    var typeInfo = type;
+
+                    if (typeInfo.IsAbstract || typeInfo.IsInterface)
+                    {
+                        continue;
+                    }
+
+                    var constructors = typeInfo.GetConstructors();
+                    if (constructors.Length != 1)
+                    {
+                        continue;
+                    }
+
+                    var constructor = constructors.First();
+                    var parameters = constructor.GetParameters();
+                    if (parameters.Length == 0 && typeof(ITestRunContext).IsAssignableFrom(type))
+                    {
+                        testContextTypes.Add(type);
+                    }
+                }
+            }
+
             if (connector != null)
             {
                 connector.InitTestClassesFound(testClasses.Count);
