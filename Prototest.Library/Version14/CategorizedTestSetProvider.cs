@@ -20,7 +20,7 @@ namespace Prototest.Library.Version14
                         .ToArray())
                 let threadControlState = ((ThreadControl)assertTypes[typeof(IThreadControl)]()).GetAndClearThreadControlMarked()
                 from method in
-                    ((Version11.Categorize) assertTypes[typeof(Version1.ICategorize)]()).GetAndClearRegisteredAsyncMethods()
+                    ((Version15.ICategorizeClearable) assertTypes[typeof(Version1.ICategorize)]()).GetAndClearRegisteredAsyncMethods()
                 select new
                 {
                     TestClass = cls.Type,
@@ -42,7 +42,7 @@ namespace Prototest.Library.Version14
                          .ToArray())
                       let threadControlState = ((ThreadControl)assertTypes[typeof(IThreadControl)]()).GetAndClearThreadControlMarked()
                       from method in
-                          ((Version11.Categorize)assertTypes[typeof(Version1.ICategorize)]()).GetAndClearRegisteredMethods()
+                          ((Version15.ICategorizeClearable)assertTypes[typeof(Version1.ICategorize)]()).GetAndClearRegisteredMethods()
                       select new
                       {
                           TestClass = cls.Type,

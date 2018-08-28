@@ -1,9 +1,5 @@
-.vs/*
 bin/
 obj/
-*.csproj
-*.sln
-*.speccache
-*.csproj.user
-*.bak
-*.nupkg
+/.vs/
+/.vscode/
+/*.nupkg

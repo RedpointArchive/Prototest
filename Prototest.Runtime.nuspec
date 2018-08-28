@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+    <metadata minClientVersion="4.0">
+        <id>Prototest.Runtime</id>
+        <version>1.6.2</version>
+        <authors>Redpoint Games</authors>
+        <description>Prototest is a cross-platform testing framework with guaranteed forward compatibility. This is the runtime library.</description>
+        <language>en-US</language>
+        <projectUrl>https://github.com/RedpointGames/Prototest</projectUrl>
+        <licenseUrl>https://opensource.org/licenses/MIT</licenseUrl>
+        <iconUrl>https://raw.githubusercontent.com/RedpointGames/Prototest/master/Build/IconFlattened.png</iconUrl>
+        <dependencies>
+            <dependency id="Microsoft.TestPlatform.ObjectModel" version="15.8.0" />
+        </dependencies>
+    </metadata>
+    <files>
+        <!-- Include binaries. -->
+        <file src="Prototest.Library\bin\Release\netstandard2.0\Prototest.Library.*" target="lib/netstandard2.0/" />
+        <file src="Prototest.TestAdapter\bin\Release\netstandard2.0\Prototest.TestAdapter.*" target="lib/netstandard2.0/" />
+    </files>
+</package>
