@@ -28,6 +28,8 @@ namespace Prototest.Library.Version15
         public List<Type> TestRunContextTypes { get; set; }
 
         public ITestRunContextApi TestRunContextApi { get; set; }
+
+        public Action Shutdown { get; set; }
     }
 }
 

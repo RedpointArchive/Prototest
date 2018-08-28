@@ -21,9 +21,20 @@ namespace Prototest.TestAdapter
     [Category("managed")]
     public class PrototestTestDiscoverer : Microsoft.VisualStudio.TestPlatform.ObjectModel.Adapter.ITestDiscoverer, ITestExecutor
     {
+        public List<TestExecutionSet> _shutdownSets = new List<TestExecutionSet>();
+
         public void Cancel()
         {
-            Debug.WriteLine("Cancel");
+            lock (_shutdownSets)
+            {
+                foreach (var set in _shutdownSets)
+                {
+                    if (set?.Shutdown != null)
+                    {
+                        set.Shutdown();
+                    }
+                }
+            }
         }
 
         private List<TestCase> DiscoverTests(IEnumerable<string> sources)
@@ -113,7 +124,7 @@ namespace Prototest.TestAdapter
             var groupedTestCases = testCases.GroupBy(x => ((TestMetadata)x.LocalExtensionData).TestExecutionSet);
             foreach (var groupedTestCase in groupedTestCases)
             {
-                runner.Run(connector, new TestExecutionSet
+                var set = new TestExecutionSet
                 {
                     AllTypes = groupedTestCase.Key.AllTypes,
                     AssertTypes = groupedTestCase.Key.AssertTypes,
@@ -125,7 +136,16 @@ namespace Prototest.TestAdapter
                     Version14Sets = groupedTestCase.Select(x => ((TestMetadata)x.LocalExtensionData).Version14Set).Where(x => x != null).Distinct().ToList(),
                     TestRunContextTypes = groupedTestCase.Key.TestRunContextTypes,
                     TestRunContextApi = new VsTestRunContextApi(runContext, frameworkHandle),
-                });
+                };
+                lock (_shutdownSets)
+                {
+                    _shutdownSets.Add(set);
+                }
+                runner.Run(connector, set);
+                lock (_shutdownSets)
+                {
+                    _shutdownSets.Remove(set);
+                }
             }
         }
 

@@ -30,6 +30,23 @@ namespace Prototest.Library.Version15
             var results14 = new Net45ConcurrentCollection<Version14.TestResult>(resultsConcurrent14);
             var contexts = new List<IDisposable>();
 
+            testExecutionSet.Shutdown = () =>
+            {
+                foreach (var context in contexts)
+                {
+                    try
+                    {
+                        context.Dispose();
+                    }
+                    catch
+                    {
+                        // Ignore exception from shutting down contexts.
+                    }
+                }
+
+                contexts.Clear();
+            };
+
             try
             {
                 foreach (var contextType in testExecutionSet.TestRunContextTypes)
@@ -269,6 +286,8 @@ namespace Prototest.Library.Version15
                         // Ignore exception from shutting down contexts.
                     }
                 }
+
+                contexts.Clear();
             }
         }
         
