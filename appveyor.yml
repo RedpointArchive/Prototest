@@ -10,6 +10,6 @@ deploy:
 - provider: NuGet
   api_key:
     secure: Gc45A/3+PYem242Xzm2BBTAqrfddZNt85vQ8kq32PguForxZbZpnLcidff7dqI+h
-  artifact: '*.nupkg'
+  artifact: Prototest
   on:
     branch: master
