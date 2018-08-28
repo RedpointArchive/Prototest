@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "Prototest.TestAdapter": {
+      "commandName": "Executable",
+      "executablePath": "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\Common7\\IDE\\CommonExtensions\\Microsoft\\TestWindow\\vstest.console.exe",
+      "commandLineArgs": "/testadapterpath:\"..\\..\\..\\..\\Prototest.TestAdapter\\bin\\Debug\\netstandard2.0\" Prototest.Example.dll",
+      "workingDirectory": "C:\\Users\\jrhod\\Documents\\Projects\\PrototestNew\\Prototest\\Prototest.Example\\bin\\Debug\\netcoreapp2.1"
+    }
+  }
+}

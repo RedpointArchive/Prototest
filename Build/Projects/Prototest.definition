@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<ExternalProject Name="Prototest">
-  <Reference Include="Prototest.Include" />
-  <Reference Include="Prototest.Library" />
-</ExternalProject>

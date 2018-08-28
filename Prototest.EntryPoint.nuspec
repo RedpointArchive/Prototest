@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+    <metadata minClientVersion="4.0">
+        <id>Prototest.EntryPoint</id>
+        <version>1.6.2</version>
+        <authors>Redpoint Games</authors>
+        <description>Prototest is a cross-platform testing framework with guaranteed forward compatibility. This is the entrypoint helper that enables test programs to run from the command-line.</description>
+        <language>en-US</language>
+        <projectUrl>https://github.com/RedpointGames/Prototest</projectUrl>
+        <licenseUrl>https://opensource.org/licenses/MIT</licenseUrl>
+        <iconUrl>https://raw.githubusercontent.com/RedpointGames/Prototest/master/Build/IconFlattened.png</iconUrl>
+        <contentFiles>
+            <files include="any/any/Program.cs" buildAction="Compile" copyToOutput="false" />
+        </contentFiles>
+    </metadata>
+    <files>
+        <!-- Include build properties. -->
+        <file src="build\Prototest.EntryPoint.targets" target="build/Prototest.EntryPoint.targets" />
+
+        <!-- Include Program entry point. -->
+        <file src="Prototest.Include\Program.cs" target="contentFiles/any/any/Program.cs" />
+    </files>
+</package>

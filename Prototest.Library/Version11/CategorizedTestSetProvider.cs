@@ -22,7 +22,7 @@ namespace Prototest.Library.Version11
                         .ToArray())
                 let threadControlState = ((ThreadControl)assertTypes[typeof(IThreadControl)]()).GetAndClearThreadControlMarked()
                 from method in
-                    ((Categorize) assertTypes[typeof(Version1.ICategorize)]()).GetAndClearRegisteredMethods() // The same object is shared between the v1.1 and v1.3 interfaces.
+                    ((Version15.ICategorizeClearable) assertTypes[typeof(Version1.ICategorize)]()).GetAndClearRegisteredMethods() // The same object is shared between the v1.1 and v1.3 interfaces.
 #if !PLATFORM_UNITY
 #if PLATFORM_PCL
                 where method.GetMethodInfo().ReturnType != typeof(System.Threading.Tasks.Task)

@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DefineConstants>TRACE;PLATFORM_WINDOWS</DefineConstants>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.8.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Prototest.Library\Prototest.Library.csproj" />
+    <ProjectReference Include="..\Prototest.TestAdapter\Prototest.TestAdapter.csproj" />
+  </ItemGroup>
+
+  <Import Project="..\Prototest.Include\Prototest.Include.projitems" Label="Shared" />
+
+</Project>

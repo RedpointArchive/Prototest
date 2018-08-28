@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+    <metadata minClientVersion="4.0">
+        <id>Prototest</id>
+        <version>$version$</version>
+        <authors>Redpoint Games</authors>
+        <description>Prototest is a cross-platform testing framework with guaranteed forward compatibility.</description>
+        <language>en-US</language>
+        <projectUrl>https://github.com/RedpointGames/Prototest</projectUrl>
+        <licenseUrl>https://opensource.org/licenses/MIT</licenseUrl>
+        <iconUrl>https://raw.githubusercontent.com/RedpointGames/Prototest/master/Build/IconFlattened.png</iconUrl>
+        <dependencies>
+            <dependency id="Prototest.Runtime" version="$version$" include="all" exclude="" />
+            <dependency id="Prototest.EntryPoint" version="$version$" include="all" exclude="" />
+        </dependencies>
+    </metadata>
+    <files>
+    </files>
+</package>
