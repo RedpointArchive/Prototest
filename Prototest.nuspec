@@ -10,7 +10,8 @@
         <licenseUrl>https://opensource.org/licenses/MIT</licenseUrl>
         <iconUrl>https://raw.githubusercontent.com/RedpointGames/Prototest/master/Build/IconFlattened.png</iconUrl>
         <dependencies>
-            <dependency id="Prototest.Runtime" version="$version$" />
+            <dependency id="Prototest.Runtime" version="$version$" include="all" exclude="" />
+            <dependency id="Prototest.EntryPoint" version="$version$" include="all" exclude="" />
         </dependencies>
     </metadata>
     <files>
