@@ -45,12 +45,33 @@ namespace Prototest.TestAdapter
                         Arguments = arguments,
                         CreateNoWindow = true,
                         UseShellExecute = false,
+                        RedirectStandardOutput = true,
+                        RedirectStandardError = true,
                     };
                     foreach (var kv in environmentVariables)
                     {
                         startInfo.Environment.Add(kv);
                     }
                     var process = Process.Start(startInfo);
+                    process.EnableRaisingEvents = true;
+                    process.OutputDataReceived += (sender, e) =>
+                    {
+                        var data = e.Data.TrimEnd();
+                        if (!string.IsNullOrEmpty(data))
+                        {
+                            _frameworkHandle.SendMessage(Microsoft.VisualStudio.TestPlatform.ObjectModel.Logging.TestMessageLevel.Informational, data);
+                        }
+                    };
+                    process.ErrorDataReceived += (sender, e) =>
+                    {
+                        var data = e.Data.TrimEnd();
+                        if (!string.IsNullOrEmpty(data))
+                        {
+                            _frameworkHandle.SendMessage(Microsoft.VisualStudio.TestPlatform.ObjectModel.Logging.TestMessageLevel.Warning, data);
+                        }
+                    };
+                    process.BeginOutputReadLine();
+                    process.BeginErrorReadLine();
                     return process.Id;
                 }
             }
