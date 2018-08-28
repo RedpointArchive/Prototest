@@ -24,6 +24,10 @@ namespace Prototest.Library.Version15
         public Dictionary<Type, Func<object>> AssertTypes { get; set; }
 
         public Type[] AllTypes { get; set; }
+
+        public List<Type> TestRunContextTypes { get; set; }
+
+        public ITestRunContextApi TestRunContextApi { get; set; }
     }
 }
 

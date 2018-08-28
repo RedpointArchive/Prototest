@@ -28,6 +28,7 @@ namespace Prototest.Library.Version15
             };
 
             var testClasses = new List<Version11.TestInputEntry>();
+            var testContextTypes = new List<Type>();
 
             var types = assembly.GetTypes();
             foreach (var type in types)
@@ -44,7 +45,7 @@ namespace Prototest.Library.Version15
                 {
                     continue;
                 }
-
+                
                 var constructor = constructors.First();
                 var parameters = constructor.GetParameters();
                 if (parameters.Length > 0 && parameters.All(x => assertTypes.Keys.Contains(x.ParameterType)))
@@ -61,6 +62,10 @@ namespace Prototest.Library.Version15
                             .ToList();
 
                     testClasses.Add(testClass);
+                }
+                else if (parameters.Length == 0 && typeof(ITestRunContext).IsAssignableFrom(type))
+                {
+                    testContextTypes.Add(type);
                 }
             }
 
@@ -119,6 +124,7 @@ namespace Prototest.Library.Version15
                 Categorize = categorize,
                 AssertTypes = assertTypes,
                 AllTypes = types,
+                TestRunContextTypes = testContextTypes,
             };
         }
 

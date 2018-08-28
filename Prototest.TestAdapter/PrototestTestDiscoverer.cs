@@ -123,6 +123,8 @@ namespace Prototest.TestAdapter
                     ThreadControl = groupedTestCase.Key.ThreadControl,
                     Version11Sets = groupedTestCase.Select(x => ((TestMetadata)x.LocalExtensionData).Version11Set).Where(x => x != null).Distinct().ToList(),
                     Version14Sets = groupedTestCase.Select(x => ((TestMetadata)x.LocalExtensionData).Version14Set).Where(x => x != null).Distinct().ToList(),
+                    TestRunContextTypes = groupedTestCase.Key.TestRunContextTypes,
+                    TestRunContextApi = new VsTestRunContextApi(frameworkHandle),
                 });
             }
         }
