@@ -43,7 +43,7 @@ try
     {
         exit $LASTEXITCODE
     }
-    Move-Item -Force .\Prototest.Library\bin\Debug\Prototest.*.nupkg .\
+    Move-Item -Force .\Prototest.Library\bin\Release\Prototest.*.nupkg .\
 } 
 finally 
 {
