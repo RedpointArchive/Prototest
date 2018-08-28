@@ -11,5 +11,9 @@ namespace Prototest.Library.Version15
         int RunProcess(string filePath, string workingDirectory, string arguments, IDictionary<string, string> environmentVariables);
 
         void LogMessage(string message);
+
+        string SolutionDirectory { get; }
+
+        string TestRunDirectory { get; }
     }
 }

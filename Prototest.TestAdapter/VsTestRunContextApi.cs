@@ -9,15 +9,21 @@ namespace Prototest.TestAdapter
 {
     public class VsTestRunContextApi : ITestRunContextApi
     {
+        private readonly IRunContext _runContext;
         private readonly IFrameworkHandle _frameworkHandle;
 
-        public VsTestRunContextApi(IFrameworkHandle frameworkHandle)
+        public VsTestRunContextApi(IRunContext runContext, IFrameworkHandle frameworkHandle)
         {
+            _runContext = runContext;
             _frameworkHandle = frameworkHandle;
         }
 
         public bool IsVsHostedTestRun => true;
-        
+
+        public string SolutionDirectory => _runContext.SolutionDirectory;
+
+        public string TestRunDirectory => _runContext.TestRunDirectory;
+
         public int RunProcess(string filePath, string workingDirectory, string arguments, IDictionary<string, string> environmentVariables)
         {
             try
