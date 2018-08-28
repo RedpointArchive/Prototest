@@ -32,52 +32,17 @@ namespace Prototest.Example
 }
 ```
 
-A more extensive example can be found in the repository.
-
 Getting Started
 ------------------
 
-## NuGet
+If you're installing Prototest into a test assembly itself, you should install the [Prototest](https://www.nuget.org/packages/Prototest/) package and target .NET Core (console application) for the test application.
 
-Install Prototest into your project using NuGet by installing the [Prototest](https://www.nuget.org/packages/Prototest/) package.
-
-You will also need to install the `NDesk.Options` package.
-
-## Protobuild
-
-Install Prototest into your project using [Protobuild](https://protobuild.org/), like so:
-
-```
-Protobuild.exe --add Prototest
-```
-
-Then reference Prototest from the test project, like so:
-
-```xml
-<?xml version="1.0" encoding="utf-8"?>
-<Project Name="MyTestProject" Path="MyTestProject" Type="Console">
-  <References>
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="Prototest" />
-  </References>
-  <Files>
-    <!-- ... -->
-  </Files>
-</Project>
-```
+If you just want to use Prototest's APIs inside another library (which will then be used in a test assembly), only install the [Prototest.Runtime](https://www.nuget.org/packages/Prototest.Runtime/).
 
 Supported Platforms
 ----------------------
 
-Prototest supports the following platforms:
-
-* Windows
-* MacOS
-* Linux
-* Android
-
-On mobile platforms, Prototest produces an application which you must run on a device or in an emulator.  On desktop platforms, Prototest produces a command-line program.
+Prototest runs on test assemblies using .NET Core or .NET Standard 2.0 and higher.
 
 Build Status
 -------------
