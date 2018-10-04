@@ -11,14 +11,25 @@ try
     }
 
     # Test running the example directly.
+    $env:TEST_ENVIRONMENT="production"
     dotnet .\Prototest.Example\bin\Release\netcoreapp2.1\Prototest.Example.dll -c Functional
     if ($LASTEXITCODE -ne 0) 
     {
         exit $LASTEXITCODE
     }
+    $env:TEST_ENVIRONMENT=$null
 
     # Test running the example via dotnet test.
+    $env:TEST_ENVIRONMENT="production"
     dotnet test -c Release .\Prototest.Example\Prototest.Example.csproj
+    if ($LASTEXITCODE -ne 0) 
+    {
+        exit $LASTEXITCODE
+    }
+    $env:TEST_ENVIRONMENT=$null
+
+    # Test running the example via dotnet vstest.
+    dotnet vstest .\Prototest.Example\bin\Release\netcoreapp2.1\Prototest.Example.dll "--logger:console;verbosity=normal" -- Env.TEST_ENVIRONMENT=production
     if ($LASTEXITCODE -ne 0) 
     {
         exit $LASTEXITCODE

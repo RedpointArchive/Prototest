@@ -11,6 +11,8 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
+using System.Xml.Linq;
+using System.Xml.XPath;
 using DefaultTestRunner = Prototest.Library.Version15.DefaultTestRunner;
 
 namespace Prototest.TestAdapter
@@ -104,6 +106,18 @@ namespace Prototest.TestAdapter
         
         public void RunTests(IEnumerable<TestCase> tests, IRunContext runContext, IFrameworkHandle frameworkHandle)
         {
+            var document = XDocument.Parse(runContext.RunSettings.SettingsXml);
+            foreach (var env in document.XPathSelectElements("/RunSettings/Env/*"))
+            {
+                Console.WriteLine($"Setting environment variable: {env.Name.LocalName}={env.Value}");
+                Environment.SetEnvironmentVariable(env.Name.LocalName, env.Value);
+            }
+            foreach (var env in document.XPathSelectElements("/TestSettings/Env/*"))
+            {
+                Console.WriteLine($"Setting environment variable: {env.Name.LocalName}={env.Value}");
+                Environment.SetEnvironmentVariable(env.Name.LocalName, env.Value);
+            }
+
             var runner = new DefaultTestRunner();
             var testCases = tests.ToList();
 
