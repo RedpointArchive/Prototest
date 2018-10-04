@@ -109,12 +109,10 @@ namespace Prototest.TestAdapter
             var document = XDocument.Parse(runContext.RunSettings.SettingsXml);
             foreach (var env in document.XPathSelectElements("/RunSettings/Env/*"))
             {
-                Console.WriteLine($"Setting environment variable: {env.Name.LocalName}={env.Value}");
                 Environment.SetEnvironmentVariable(env.Name.LocalName, env.Value);
             }
             foreach (var env in document.XPathSelectElements("/TestSettings/Env/*"))
             {
-                Console.WriteLine($"Setting environment variable: {env.Name.LocalName}={env.Value}");
                 Environment.SetEnvironmentVariable(env.Name.LocalName, env.Value);
             }
 
