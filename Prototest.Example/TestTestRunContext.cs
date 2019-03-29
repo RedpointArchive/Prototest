@@ -12,6 +12,8 @@ namespace Prototest.Example
         {
             contextApi.LogMessage("Test context spinning up...");
 
+            Environment.SetEnvironmentVariable("TEST_ENVIRONMENT", "production");
+
             var pid = contextApi.RunProcess(
                 Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.System), "cmd.exe"),
                 Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
